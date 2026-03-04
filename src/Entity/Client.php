@@ -36,6 +36,9 @@ class Client
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
+    #[ORM\Column(nullable: true, unique: true)]
+    private ?int $externalId = null;
+
     /** @var Collection<int, Document> */
     #[ORM\OneToMany(targetEntity: Document::class, mappedBy: 'client', orphanRemoval: true)]
     private Collection $documents;
@@ -152,6 +155,17 @@ class Client
             }
         }
 
+        return $this;
+    }
+
+    public function getExternalId(): ?int
+    {
+        return $this->externalId;
+    }
+
+    public function setExternalId(?int $externalId): static
+    {
+        $this->externalId = $externalId;
         return $this;
     }
 }

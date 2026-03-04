@@ -82,8 +82,8 @@
 									<div class="activity-title">{{ doc.title }}</div>
 									<div class="activity-meta">
 										{% if doc.client %}
-											{{ doc.client.firstName }}
-											{{ doc.client.lastName }}
+											{{ doc.client.nom }}
+											{{ doc.client.prenom }}
 											•
 										{% endif %}
 										{{ doc.createdAt|date('d/m/Y H:i') }}

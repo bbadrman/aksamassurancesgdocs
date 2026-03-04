@@ -16,11 +16,11 @@ class ClientType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('firstName', TextType::class , [
+            ->add('nom', TextType::class , [
             'label' => 'First Name',
             'attr' => ['placeholder' => 'First name'],
         ])
-            ->add('lastName', TextType::class , [
+            ->add('prenom', TextType::class , [
             'label' => 'Last Name',
             'attr' => ['placeholder' => 'Last name'],
         ])
@@ -34,7 +34,7 @@ class ClientType extends AbstractType
             'required' => false,
             'attr' => ['placeholder' => '+33 6 00 00 00 00'],
         ])
-            ->add('address', TextareaType::class , [
+            ->add('adress', TextareaType::class , [
             'label' => 'Address',
             'required' => false,
             'attr' => ['rows' => 3, 'placeholder' => 'Street, City, Zip'],

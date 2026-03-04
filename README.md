@@ -134,7 +134,7 @@ Granular permissions organized by resource:
 ```php
 - id: Primary key
 - firstName: Client's first name
-- lastName: Client's last name
+- prenom: Client's last name
 - email: Contact email
 - phone: Contact phone number
 - address: Physical address
@@ -366,8 +366,8 @@ Email Notification (optional)
 ### Client-Document Relationship
 ```
 Client (1) ──────── (Many) Documents
-  ├─ firstName
-  ├─ lastName
+  ├─ nom
+  ├─ prenom
   └─ documents[]
          ├─ title
          ├─ fileName

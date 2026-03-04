@@ -4,6 +4,7 @@ namespace App\Controller\Api;
 
 use App\Entity\Client;
 use App\Repository\ClientRepository;
+use App\Service\ClientSyncService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -18,7 +19,8 @@ class ClientApiController extends AbstractController
     public function __construct(
         private ClientRepository $clientRepository,
         private EntityManagerInterface $em,
-        private readonly HttpClientInterface $httpClient
+        private readonly HttpClientInterface $httpClient,
+         private ClientSyncService $clientSyncService,
     ) {}
 
     // GET /api/clients
@@ -62,7 +64,7 @@ public function getApiclient(): Response
         $clients = array_map(fn(array $c) => [
             'id'        => $c['id']           ?? null,
             'nom' => $c['nom']           ?? '',   // template: client.firstName
-            'prenom'  => $c['prenom']        ?? '',   // template: client.lastName
+            'prenom'  => $c['prenom']        ?? '',   // template: client.prenom
             'email'     => $c['email']         ?? null,
             'phone'     => $c['phone']         ?? null,
             'documents' => $c['contrats']      ?? [],   // template: client.documents|length

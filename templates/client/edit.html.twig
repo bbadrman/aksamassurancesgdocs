@@ -1,8 +1,8 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Edit
-	{{ client.firstName }}
-	{{ client.lastName }}
+	{{ client.nom }}
+	{{ client.prenom }}
 	- DocManager
 {% endblock %}
 
@@ -17,14 +17,14 @@
 	<div class="card" style="max-width: 600px;">
 		{{ form_start(form) }}
 		<div class="form-group">
-			{{ form_label(form.firstName) }}
-			{{ form_widget(form.firstName, {'attr': {'class': 'form-control'}}) }}
-			{{ form_errors(form.firstName) }}
+			{{ form_label(form.nom) }}
+			{{ form_widget(form.nom, {'attr': {'class': 'form-control'}}) }}
+			{{ form_errors(form.nom) }}
 		</div>
 		<div class="form-group">
-			{{ form_label(form.lastName) }}
-			{{ form_widget(form.lastName, {'attr': {'class': 'form-control'}}) }}
-			{{ form_errors(form.lastName) }}
+			{{ form_label(form.prenom) }}
+			{{ form_widget(form.prenom, {'attr': {'class': 'form-control'}}) }}
+			{{ form_errors(form.prenom) }}
 		</div>
 		<div class="form-group">
 			{{ form_label(form.email) }}
@@ -37,9 +37,9 @@
 			{{ form_errors(form.phone) }}
 		</div>
 		<div class="form-group">
-			{{ form_label(form.address) }}
-			{{ form_widget(form.address, {'attr': {'class': 'form-control'}}) }}
-			{{ form_errors(form.address) }}
+			{{ form_label(form.adress) }}
+			{{ form_widget(form.adress, {'attr': {'class': 'form-control'}}) }}
+			{{ form_errors(form.adress) }}
 		</div>
 		<div style="display: flex; gap: 0.75rem; margin-top: 1.5rem;">
 			<button type="submit" class="btn btn-primary">Save Changes</button>

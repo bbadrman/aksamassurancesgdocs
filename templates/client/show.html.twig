@@ -1,8 +1,8 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-	{{ client.firstName }}
-	{{ client.lastName }}
+	{{ client.nom }}
+	{{ client.prenom }}
 	- DocManager
 {% endblock %}
 
@@ -10,8 +10,8 @@
 	<div class="page-header">
 		<div>
 			<h1 class="page-title">👤
-				{{ client.firstName }}
-				{{ client.lastName }}</h1>
+				{{ client.nom }}
+				{{ client.prenom }}</h1>
 			<p class="page-subtitle">Client details and documents</p>
 		</div>
 		<div class="page-actions">
@@ -50,8 +50,8 @@
 		<div class="detail-list">
 			<div class="detail-item">
 				<div class="detail-label">Full Name</div>
-				<div class="detail-value">{{ client.firstName }}
-					{{ client.lastName }}</div>
+				<div class="detail-value">{{ client.nom }}
+					{{ client.prenom }}</div>
 			</div>
 			<div class="detail-item">
 				<div class="detail-label">Email</div>
@@ -74,8 +74,8 @@
 				</div>
 			</div>
 			<div class="detail-item">
-				<div class="detail-label">Address</div>
-				<div class="detail-value">{{ client.address ? client.address|raw : '<span class="text-muted">Not provided</span>'|raw }}</div>
+				<div class="detail-label">adress</div>
+				<div class="detail-value">{{ client.adress ? client.adress|raw : '<span class="text-muted">Not provided</span>'|raw }}</div>
 			</div>
 			<div class="detail-item">
 				<div class="detail-label">Created</div>

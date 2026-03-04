@@ -7,6 +7,7 @@ use App\Enum\Permission;
 use App\Form\ClientType;
 use App\Repository\ClientRepository;
 use App\Service\ActivityLogger;
+use App\Service\ClientSyncService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,13 +21,26 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted('ROLE_USER')]
 final class ClientController extends AbstractController
 {
+    public function __construct(
+        
+        private ClientRepository $clientRepository,
+        private ClientSyncService $clientSyncService,
+    ) {}
+
     #[Route('', name: 'app_client_index', methods: ['GET'])]
     #[IsGranted(Permission::CLIENTS_VIEW_LIST)]
     public function index(ClientRepository $clientRepository): Response
     {
-        return $this->render('client/index.html.twig', [
-            'clients' => $clientRepository->findBy([], ['createdAt' => 'DESC']),
-        ]);
+         try {
+        $clients = $this->clientSyncService->syncAndGetClients();
+    } catch (\Exception $e) {
+        $this->addFlash('error', 'Impossible de charger les clients : ' . $e->getMessage());
+        $clients = $this->clientRepository->findAll(); // fallback BDD locale
+    }
+
+    return $this->render('client/index.html.twig', [
+        'clients' => $clients,
+    ]);
     }
 
    

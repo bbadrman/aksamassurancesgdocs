@@ -43,10 +43,10 @@
 				<div class="detail-value">
 					{% if document.client %}
 						{% if is_granted('CLIENT_VIEW') %}
-							<a href="{{ path('app_client_show', {id: document.client.id}) }}">{{ document.client.firstName }}
-								{{ document.client.lastName }}</a>
+							<a href="{{ path('app_client_show', {id: document.client.id}) }}">{{ document.client.nom }}
+								{{ document.client.prenom }}</a>
 						{% else %}
-							{{ document.client.firstName }} {{ document.client.lastName }}
+							{{ document.client.nom }} {{ document.client.prenom }}
 						{% endif %}
 					{% else %}
 						<span class="text-muted">—</span>
