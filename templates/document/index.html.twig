@@ -33,8 +33,8 @@
 							<option value="">All Clients</option>
 							{% for client in clients %}
 								<option value="{{ client.id }}" {% if filters.client and filters.client.id == client.id %} selected {% endif %}>
-									{{ client.firstName }}
-									{{ client.lastName }}
+									{{ client.nom }}
+									{{ client.prenom }}
 								</option>
 							{% endfor %}
 						</select>
@@ -100,11 +100,11 @@
 									{% if doc.client %}
 										{% if is_granted('CLIENT_VIEW') %}
 											<a href="{{ path('app_client_show', {id: doc.client.id}) }}">
-												{{ doc.client.firstName }}
-												{{ doc.client.lastName }}
+												{{ doc.client.nom }}
+												{{ doc.client.prenom }}
 											</a>
 										{% else %}
-											{{ doc.client.firstName }} {{ doc.client.lastName }}
+											{{ doc.client.nom }} {{ doc.client.prenom }}
 										{% endif %}
 									{% else %}
 										<span class="text-muted">—</span>

@@ -19,10 +19,10 @@ class Client
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $firstName = null;
+    private ?string $nom = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $lastName = null;
+    private ?string $prenom = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $email = null;
@@ -31,7 +31,7 @@ class Client
     private ?string $phone = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $address = null;
+    private ?string $adress = null;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
@@ -48,7 +48,7 @@ class Client
 
     public function __toString(): string
     {
-        return $this->firstName . ' ' . $this->lastName;
+        return $this->nom . ' ' . $this->prenom;
     }
 
     public function getId(): ?int
@@ -56,26 +56,26 @@ class Client
         return $this->id;
     }
 
-    public function getFirstName(): ?string
+    public function getnom(): ?string
     {
-        return $this->firstName;
+        return $this->nom;
     }
 
-    public function setFirstName(string $firstName): static
+    public function setnom(string $nom): static
     {
-        $this->firstName = $firstName;
+        $this->nom = $nom;
 
         return $this;
     }
 
-    public function getLastName(): ?string
+    public function getprenom(): ?string
     {
-        return $this->lastName;
+        return $this->prenom;
     }
 
-    public function setLastName(string $lastName): static
+    public function setprenom(string $prenom): static
     {
-        $this->lastName = $lastName;
+        $this->prenom = $prenom;
 
         return $this;
     }
@@ -104,14 +104,14 @@ class Client
         return $this;
     }
 
-    public function getAddress(): ?string
+    public function getadress(): ?string
     {
-        return $this->address;
+        return $this->adress;
     }
 
-    public function setAddress(?string $address): static
+    public function setadress(?string $adress): static
     {
-        $this->address = $address;
+        $this->adress = $adress;
 
         return $this;
     }

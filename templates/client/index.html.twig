@@ -72,13 +72,13 @@
 									{# Name always shown, but link controlled by permission #}
 									{% if is_granted('clients.view_details') %}
 										<a href="{{ path('app_client_show', {id: client.id}) }}" style="font-weight: 600; color: var(--text-primary);">
-											{{ client.firstName }}
-											{{ client.lastName }}
+											{{ client.nom }}
+											{{ client.prenom }}
 										</a>
 									{% else %}
 										<span style="font-weight: 600; color: var(--text-primary);">
-											{{ client.firstName }}
-											{{ client.lastName }}
+											{{ client.nom }}
+											{{ client.prenom }}
 										</span>
 									{% endif %}
 								</td>

@@ -1,8 +1,8 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Documents -
-	{{ client.firstName }}
-	{{ client.lastName }}
+	{{ client.nom }}
+	{{ client.prenom }}
 	- DocManager
 {% endblock %}
 
@@ -11,8 +11,8 @@
 		<div>
 			<h1 class="page-title">📄 Documents</h1>
 			<p class="page-subtitle">Documents for
-				{{ client.firstName }}
-				{{ client.lastName }}</p>
+				{{ client.nom }}
+				{{ client.prenom }}</p>
 		</div>
 		<div class="page-actions">
 			{% if is_granted('DOCUMENT_UPLOAD') %}
