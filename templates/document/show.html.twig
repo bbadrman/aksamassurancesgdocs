@@ -39,14 +39,14 @@
 				<div class="detail-value">{{ document.description ? document.description|raw : '<span class="text-muted">No description</span>'|raw }}</div>
 			</div>
 			<div class="detail-item">
-				<div class="detail-label">Client</div>
+				<div class="detail-label">Contrat</div>
 				<div class="detail-value">
-					{% if document.client %}
-						{% if is_granted('CLIENT_VIEW') %}
-							<a href="{{ path('app_client_show', {id: document.client.id}) }}">{{ document.client.nom }}
-								{{ document.client.prenom }}</a>
+					{% if document.contrat %}
+						{% if is_granted('CONTRAT_VIEW') %}
+							<a href="{{ path('app_contrat_show', {id: document.contrat.id}) }}">{{ document.contrat.nom }}
+								{{ document.contrat.prenom }}</a>
 						{% else %}
-							{{ document.client.nom }} {{ document.client.prenom }}
+							{{ document.contrat.nom }} {{ document.contrat.prenom }}
 						{% endif %}
 					{% else %}
 						<span class="text-muted">—</span>

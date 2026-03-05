@@ -18,9 +18,9 @@ class ActivityLog
     public const ACTION_EDIT = 'edit';
     public const ACTION_RESTORE = 'restore';
     public const ACTION_PERMANENT_DELETE = 'permanent_delete';
-    public const ACTION_CLIENT_CREATE = 'client_create';
-    public const ACTION_CLIENT_EDIT = 'client_edit';
-    public const ACTION_CLIENT_DELETE = 'client_delete';
+    public const ACTION_CONTRAT_CREATE = 'contrat_create';
+    public const ACTION_CONTRAT_EDIT = 'contrat_edit';
+    public const ACTION_CONTRAT_DELETE = 'contrat_delete';
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -40,7 +40,7 @@ class ActivityLog
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: true)]
-    private ?Client $client = null;
+    private ?Contrat $contrat = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $details = null;
@@ -91,14 +91,14 @@ class ActivityLog
         return $this;
     }
 
-    public function getClient(): ?Client
+    public function getContrat(): ?Contrat
     {
-        return $this->client;
+        return $this->contrat;
     }
 
-    public function setClient(?Client $client): static
+    public function setContrat(?Contrat $contrat): static
     {
-        $this->client = $client;
+        $this->contrat = $contrat;
         return $this;
     }
 
@@ -136,9 +136,9 @@ class ActivityLog
             self::ACTION_EDIT => 'Edited document',
             self::ACTION_RESTORE => 'Restored from trash',
             self::ACTION_PERMANENT_DELETE => 'Permanently deleted',
-            self::ACTION_CLIENT_CREATE => 'Created client',
-            self::ACTION_CLIENT_EDIT => 'Edited client',
-            self::ACTION_CLIENT_DELETE => 'Deleted client',
+            self::ACTION_CONTRAT_CREATE => 'Created contrat',
+            self::ACTION_CONTRAT_EDIT => 'Edited contrat',
+            self::ACTION_CONTRAT_DELETE => 'Deleted contrat',
             default => $this->action,
         };
     }

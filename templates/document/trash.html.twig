@@ -29,7 +29,7 @@
 					<thead>
 						<tr>
 							<th>Title</th>
-							<th>Client</th>
+							<th>Contrat</th>
 							<th>Deleted</th>
 							<th>Actions</th>
 						</tr>
@@ -44,9 +44,9 @@
 									{% endif %}
 								</td>
 								<td>
-									{% if doc.client %}
-										{{ doc.client.nom }}
-										{{ doc.client.prenom }}
+									{% if doc.contrat %}
+										{{ doc.contrat.nom }}
+										{{ doc.contrat.prenom }}
 									{% else %}
 										<span class="text-muted">—</span>
 									{% endif %}

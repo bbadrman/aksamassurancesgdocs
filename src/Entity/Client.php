@@ -39,14 +39,12 @@ class Client
     #[ORM\Column(nullable: true, unique: true)]
     private ?int $externalId = null;
 
-    /** @var Collection<int, Document> */
-    #[ORM\OneToMany(targetEntity: Document::class, mappedBy: 'client', orphanRemoval: true)]
-    private Collection $documents;
+  
 
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
-        $this->documents = new ArrayCollection();
+       
     }
 
     public function __toString(): string
@@ -131,32 +129,7 @@ class Client
         return $this;
     }
 
-    /** @return Collection<int, Document> */
-    public function getDocuments(): Collection
-    {
-        return $this->documents;
-    }
-
-    public function addDocument(Document $document): static
-    {
-        if (!$this->documents->contains($document)) {
-            $this->documents->add($document);
-            $document->setClient($this);
-        }
-
-        return $this;
-    }
-
-    public function removeDocument(Document $document): static
-    {
-        if ($this->documents->removeElement($document)) {
-            if ($document->getClient() === $this) {
-                $document->setClient(null);
-            }
-        }
-
-        return $this;
-    }
+    
 
     public function getExternalId(): ?int
     {

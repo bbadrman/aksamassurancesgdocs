@@ -2,8 +2,8 @@
 
 namespace App\Service;
 
-use App\Entity\ActivityLog;
-use App\Entity\Client;
+use App\Entity\ActivityLog; 
+use App\Entity\Contrat;
 use App\Entity\Document;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
@@ -25,14 +25,14 @@ class ActivityLogger
         UserInterface $user,
         string $action,
         ?Document $document = null,
-        ?Client $client = null,
+        ?Contrat $contrat = null,
         ?string $details = null
     ): ActivityLog {
         $activityLog = new ActivityLog();
         $activityLog->setUser($user instanceof User ? $user : null);
         $activityLog->setAction($action);
         $activityLog->setDocument($document);
-        $activityLog->setClient($client);
+        $activityLog->setContrat($contrat);
         $activityLog->setDetails($details);
 
         $this->em->persist($activityLog);
@@ -50,7 +50,7 @@ class ActivityLogger
             $user,
             ActivityLog::ACTION_UPLOAD,
             $document,
-            $document->getClient(),
+            $document->getContrat(),
             sprintf('Uploaded: %s', $document->getTitle())
         );
     }
@@ -64,7 +64,7 @@ class ActivityLogger
             $user,
             ActivityLog::ACTION_DELETE,
             $document,
-            $document->getClient(),
+            $document->getContrat(),
             sprintf('Moved to trash: %s', $document->getTitle())
         );
     }
@@ -78,7 +78,7 @@ class ActivityLogger
             $user,
             ActivityLog::ACTION_PERMANENT_DELETE,
             $document,
-            $document->getClient(),
+            $document->getContrat(),
             sprintf('Permanently deleted: %s', $document->getTitle())
         );
     }
@@ -92,7 +92,7 @@ class ActivityLogger
             $user,
             ActivityLog::ACTION_DOWNLOAD,
             $document,
-            $document->getClient(),
+            $document->getContrat(),
             sprintf('Downloaded: %s', $document->getTitle())
         );
     }
@@ -106,7 +106,7 @@ class ActivityLogger
             $user,
             ActivityLog::ACTION_RESTORE,
             $document,
-            $document->getClient(),
+            $document->getContrat(),
             sprintf('Restored from trash: %s', $document->getTitle())
         );
     }
@@ -120,50 +120,50 @@ class ActivityLogger
             $user,
             ActivityLog::ACTION_EDIT,
             $document,
-            $document->getClient(),
+            $document->getContrat(),
             sprintf('Edited: %s', $document->getTitle())
         );
     }
 
     /**
-     * Log client create
+     * Log contrat create
      */
-    public function logClientCreate(UserInterface $user, Client $client): ActivityLog
+    public function logContratCreate(UserInterface $user, Contrat $contrat): ActivityLog
     {
         return $this->log(
             $user,
-            ActivityLog::ACTION_CLIENT_CREATE,
+            ActivityLog::ACTION_CONTRAT_CREATE,
             null,
-            $client,
-            sprintf('Created client: %s', $client->__toString())
+            $contrat,
+            sprintf('Created contrat: %s', $contrat->__toString())
         );
     }
 
     /**
-     * Log client edit
+     * Log contrat edit
      */
-    public function logClientEdit(UserInterface $user, Client $client): ActivityLog
+    public function logContratEdit(UserInterface $user, Contrat $contrat): ActivityLog
     {
         return $this->log(
             $user,
-            ActivityLog::ACTION_CLIENT_EDIT,
+            ActivityLog::ACTION_CONTRAT_EDIT,
             null,
-            $client,
-            sprintf('Edited client: %s', $client->__toString())
+            $contrat,
+            sprintf('Edited contrat: %s', $contrat->__toString())
         );
     }
 
     /**
-     * Log client delete
+     * Log contrat delete
      */
-    public function logClientDelete(UserInterface $user, Client $client): ActivityLog
+    public function logContratDelete(UserInterface $user, Contrat $contrat): ActivityLog
     {
         return $this->log(
             $user,
-            ActivityLog::ACTION_CLIENT_DELETE,
+            ActivityLog::ACTION_CONTRAT_DELETE,
             null,
-            $client,
-            sprintf('Deleted client: %s', $client->__toString())
+            $contrat,
+            sprintf('Deleted contrat: %s', $contrat->__toString())
         );
     }
 }

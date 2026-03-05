@@ -1,8 +1,16 @@
 vich_uploader:
   db_driver: orm
+  # Pour activer Cloudflare R2, décommenter la ligne suivante et commenter 'storage: local'
+  # storage: flysystem
 
   mappings:
     document_file:
+      # Stockage local (par défaut)
       uri_prefix: /uploads/documents
       upload_destination: '%kernel.project_dir%/var/uploads/documents'
+
+      # Pour Cloudflare R2, remplacer par:
+      # uri_prefix: '%env(R2_PUBLIC_URL)%'
+      # upload_destination: documents.storage
+
       namer: Vich\UploaderBundle\Naming\SmartUniqueNamer

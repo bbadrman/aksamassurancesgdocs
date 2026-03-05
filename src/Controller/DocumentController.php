@@ -2,11 +2,12 @@
 
 namespace App\Controller;
 
-use App\Entity\Client;
+ 
+use App\Entity\Contrat;
 use App\Entity\Document;
 use App\Enum\Permission;
-use App\Form\DocumentType;
-use App\Repository\ClientRepository;
+use App\Form\DocumentType; 
+use App\Repository\ContratRepository;
 use App\Repository\DocumentRepository;
 use App\Service\ActivityLogger;
 use Doctrine\ORM\EntityManagerInterface;
@@ -30,22 +31,22 @@ final class DocumentController extends AbstractController
     public function index(
         Request $request,
         DocumentRepository $documentRepository,
-        ClientRepository $clientRepository
+        ContratRepository $contratRepository
     ): Response {
         $search = $request->query->get('search');
-        $clientId = $request->query->get('client');
+        $contratId = $request->query->get('contrat');
         $fileType = $request->query->get('fileType');
         $dateFrom = $request->query->get('dateFrom');
         $dateTo = $request->query->get('dateTo');
         $page = (int) $request->query->get('page', 1);
 
-        $client = $clientId ? $clientRepository->find($clientId) : null;
+        $contrat = $contratId ? $contratRepository->find($contratId) : null;
         $dateFromObj = $dateFrom ? new \DateTime($dateFrom) : null;
         $dateToObj = $dateTo ? new \DateTime($dateTo) : null;
 
         $result = $documentRepository->findWithFilters(
             search: $search,
-            client: $client,
+            contrat: $contrat,
             fileType: $fileType,
             dateFrom: $dateFromObj,
             dateTo: $dateToObj,
@@ -62,12 +63,12 @@ final class DocumentController extends AbstractController
             ],
             'filters' => [
                 'search' => $search,
-                'client' => $client,
+                'contrat' => $contrat,
                 'fileType' => $fileType,
                 'dateFrom' => $dateFrom,
                 'dateTo' => $dateTo,
             ],
-            'clients' => $clientRepository->findAll(),
+            'contrats' => $contratRepository->findAll(),
         ]);
     }
 
@@ -137,29 +138,29 @@ final class DocumentController extends AbstractController
     }
 
     /**
-     * List all documents for a given client (legacy route).
+     * List all documents for a given contrat (legacy route).
      */
-    #[Route('/client/{id}', name: 'app_document_list', methods: ['GET'])]
+    #[Route('/contrat/{id}', name: 'app_document_list', methods: ['GET'])]
     #[IsGranted(Permission::DOCUMENTS_VIEW_LIST)]
-    public function list(Client $client, DocumentRepository $documentRepository): Response
+    public function list(Contrat $contrat, DocumentRepository $documentRepository): Response
     {
-        $documents = $documentRepository->findByClient($client);
+        $documents = $documentRepository->findByContrat($contrat);
 
         return $this->render('document/list.html.twig', [
-            'client' => $client,
+            'contrat' => $contrat,
             'documents' => $documents,
         ]);
     }
 
     /**
-     * Upload a new document for a client.
+     * Upload a new document for a contrat.
      */
-    #[Route('/client/{id}/new', name: 'app_document_new', methods: ['GET', 'POST'])]
+    #[Route('/contrat/{id}/new', name: 'app_document_new', methods: ['GET', 'POST'])]
     #[IsGranted(Permission::DOCUMENTS_CREATE_UPLOAD)]
-    public function new(Request $request, Client $client, EntityManagerInterface $em, ActivityLogger $activityLogger): Response
+    public function new(Request $request, Contrat $contrat, EntityManagerInterface $em, ActivityLogger $activityLogger): Response
     {
         $document = new Document();
-        $document->setClient($client);
+        $document->setContrat($contrat);
         $document->setOwner($this->getUser());
 
         $form = $this->createForm(DocumentType::class, $document, ['is_new' => true]);
@@ -181,12 +182,12 @@ final class DocumentController extends AbstractController
 
             $this->addFlash('success', 'Document uploaded successfully.');
 
-            return $this->redirectToRoute('app_document_list', ['id' => $client->getId()]);
+            return $this->redirectToRoute('app_document_list', ['id' => $contrat->getId()]);
         }
 
         return $this->render('document/new.html.twig', [
             'form' => $form,
-            'client' => $client,
+            'contrat' => $contrat,
         ]);
     }
 
@@ -295,7 +296,7 @@ final class DocumentController extends AbstractController
     #[IsGranted(Permission::DOCUMENTS_DELETE)]
     public function delete(Request $request, Document $document, EntityManagerInterface $em, ActivityLogger $activityLogger): Response
     {
-        $clientId = $document->getClient()?->getId();
+        $contratId = $document->getContrat()?->getId();
 
         if ($this->isCsrfTokenValid('delete-document-' . $document->getId(), $request->request->get('_token'))) {
             // Soft delete instead of hard delete
@@ -307,8 +308,8 @@ final class DocumentController extends AbstractController
             $this->addFlash('success', 'Document moved to trash.');
         }
 
-        if ($clientId) {
-            return $this->redirectToRoute('app_document_list', ['id' => $clientId]);
+        if ($contratId) {
+            return $this->redirectToRoute('app_document_list', ['id' => $contratId]);
         }
 
         return $this->redirectToRoute('app_document_index');

@@ -8,8 +8,8 @@
 		<div>
 			<h1 class="page-title">📤 Upload Document</h1>
 			<p class="page-subtitle">Uploading for
-				{{ client.nom }}
-				{{ client.prenom }}</p>
+				{{ contrat.nom }}
+				{{ contrat.prenom }}</p>
 		</div>
 	</div>
 
@@ -34,7 +34,7 @@
 		</div>
 		<div style="display: flex; gap: 0.75rem; margin-top: 1.5rem;">
 			<button type="submit" class="btn btn-primary">Upload Document</button>
-			<a href="{{ path('app_document_list', {id: client.id}) }}" class="btn btn-secondary">Cancel</a>
+			<a href="{{ path('app_document_list', {id: contrat.id}) }}" class="btn btn-secondary">Cancel</a>
 		</div>
 		{{ form_end(form) }}
 	</div>

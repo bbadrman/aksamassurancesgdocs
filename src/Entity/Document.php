@@ -48,9 +48,12 @@ class Document
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
     private ?\DateTimeImmutable $deletedAt = null;
 
+   
+
     #[ORM\ManyToOne(inversedBy: 'documents')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Client $client = null;
+    #[ORM\JoinColumn(nullable: true)]
+    private ?Contrat $contrat = null;
+
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
@@ -195,14 +198,15 @@ class Document
         return $this;
     }
 
-    public function getClient(): ?Client
+     
+    public function getContrat(): ?Contrat
     {
-        return $this->client;
+        return $this->contrat;
     }
 
-    public function setClient(?Client $client): static
+    public function setContrat(?Contrat $contrat): static
     {
-        $this->client = $client;
+        $this->contrat = $contrat;
         return $this;
     }
 

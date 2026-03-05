@@ -57,13 +57,13 @@
 								<span class="sidebar-link-icon">📊</span> Dashboard
 							</a>
 
-							<a href="{{ path('app_client_index') }}"
-							   class="sidebar-link {% if app.request.attributes.get('_route') starts with 'app_client' %}active{% endif %}">
-								<span class="sidebar-link-icon">👥</span> Clients
+							<a href="{{ path('app_contrat_index') }}"
+							   class="sidebar-link {% if app.request.attributes.get('_route') starts with 'app_contrat_index' %}active{% endif %}">
+								<span class="sidebar-link-icon">👥</span> Contrats
 							</a>
 
 							<a href="{{ path('app_document_index') }}"
-							   class="sidebar-link {% if app.request.attributes.get('_route') starts with 'app_document' and 'trash' not in app.request.uri %}active{% endif %}">
+							   class="sidebar-link {% if app.request.attributes.get('_route') starts with 'app_document_index' and 'trash' not in app.request.uri %}active{% endif %}">
 								<span class="sidebar-link-icon">📄</span> Documents
 							</a>
 						</div>
@@ -85,14 +85,14 @@
 							</div>
 						{% endif %}
 
-						<div class="sidebar-section">
+						{# <div class="sidebar-section">
 							<div class="sidebar-section-title">Quick Actions</div>
 							{% if is_granted('CLIENT_CREATE') %}
 								<a href="{{ path('app_client_new') }}" class="sidebar-link">
 									<span class="sidebar-link-icon">➕</span> New Client
 								</a>
 							{% endif %}
-						</div>
+						</div> #}
 					</nav>
 
 					{# ✅ Sidebar user dropdown #}

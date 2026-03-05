@@ -19,8 +19,8 @@
 				👥
 			</div>
 			<div class="stat-content">
-				<div class="stat-value">{{ totalClients }}</div>
-				<div class="stat-label">Total Clients</div>
+				<div class="stat-value">{{ totalContrats }}</div>
+				<div class="stat-label">Total contrats</div>
 			</div>
 		</div>
 		<div class="stat-card">
@@ -81,9 +81,9 @@
 								<div class="activity-content">
 									<div class="activity-title">{{ doc.title }}</div>
 									<div class="activity-meta">
-										{% if doc.client %}
-											{{ doc.client.nom }}
-											{{ doc.client.prenom }}
+										{% if doc.contrat %}
+											{{ doc.contrat.nom }}
+											{{ doc.contrat.prenom }}
 											•
 										{% endif %}
 										{{ doc.createdAt|date('d/m/Y H:i') }}
@@ -121,11 +121,11 @@
 										♻️
 									{% elseif activity.action == 'permanent_delete' %}
 										❌
-									{% elseif activity.action == 'client_create' %}
+									{% elseif activity.action == 'contrat_create' %}
 										👤
-									{% elseif activity.action == 'client_edit' %}
+									{% elseif activity.action == 'contrat_edit' %}
 										👤
-									{% elseif activity.action == 'client_delete' %}
+									{% elseif activity.action == 'contrat_delete' %}
 										👤
 									{% else %}
 										📋

@@ -1,8 +1,8 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Documents -
-	{{ client.nom }}
-	{{ client.prenom }}
+	{{ contrat.nom }}
+	{{ contrat.prenom }}
 	- DocManager
 {% endblock %}
 
@@ -11,15 +11,15 @@
 		<div>
 			<h1 class="page-title">📄 Documents</h1>
 			<p class="page-subtitle">Documents for
-				{{ client.nom }}
-				{{ client.prenom }}</p>
+				{{ contrat.nom }}
+				{{ contrat.prenom }}</p>
 		</div>
 		<div class="page-actions">
 			{% if is_granted('DOCUMENT_UPLOAD') %}
-				<a href="{{ path('app_document_new', {id: client.id}) }}" class="btn btn-primary">➕ Upload Document</a>
+				<a href="{{ path('app_document_new', {id: contrat.id}) }}" class="btn btn-primary">➕ Upload Document</a>
 			{% endif %}
-			{% if is_granted('CLIENT_VIEW') %}
-				<a href="{{ path('app_client_show', {id: client.id}) }}" class="btn btn-secondary">← Back</a>
+			{% if is_granted('CONTRAT_VIEW') %}
+				<a href="{{ path('app_contrat_show', {id: contrat.id}) }}" class="btn btn-secondary">← Back</a>
 			{% endif %}
 		</div>
 	</div>
@@ -29,9 +29,9 @@
 			<div class="empty-state">
 				<div class="empty-state-icon">📂</div>
 				<h3>No documents yet</h3>
-				<p>Upload the first document for this client.</p>
+				<p>Upload the first document for this contrat.</p>
 				{% if is_granted('DOCUMENT_UPLOAD') %}
-					<a href="{{ path('app_document_new', {id: client.id}) }}" class="btn btn-primary">➕ Upload Document</a>
+					<a href="{{ path('app_document_new', {id: contrat.id}) }}" class="btn btn-primary">➕ Upload Document</a>
 				{% endif %}
 			</div>
 		</div>

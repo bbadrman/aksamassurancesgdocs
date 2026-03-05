@@ -1,7 +1,21 @@
-# Read the documentation at https://github.com/thephpleague/flysystem-bundle/blob/master/docs/1-getting-started.md
+# Configuration Flysystem pour Cloudflare R2 (compatible S3)
 flysystem:
     storages:
-        default.storage:
-            adapter: 'local'
+        documents.storage:
+            adapter: 'aws'
             options:
-                directory: '%kernel.project_dir%/var/storage/default'
+                client: 'documents.s3_client'
+                bucket: '%env(R2_BUCKET)%'
+
+services:
+    documents.s3_client:
+        class: Aws\S3\S3Client
+        arguments:
+            -
+                version: 'latest'
+                region: 'auto'
+                endpoint: '%env(R2_ENDPOINT)%'
+                use_path_style_endpoint: true
+                credentials:
+                    key: '%env(R2_ACCESS_KEY_ID)%'
+                    secret: '%env(R2_SECRET_ACCESS_KEY)%'

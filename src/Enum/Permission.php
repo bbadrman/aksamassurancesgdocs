@@ -20,6 +20,23 @@ final class Permission
     public const CLIENTS_VIEW_ACTIONS_COLUMN = 'clients.view_actions_column';
     public const CLIENTS_VIEW_BUTTON = 'clients.view_view_button';
 
+
+    // ==================== CONTRAT PERMISSIONS ====================
+    
+    // List/View permissions
+    public const CONTRATS_VIEW_LIST = 'contrats.view_list';
+    public const CONTRATS_VIEW_DETAILS = 'contrats.view_details';
+    
+    // Action permissions
+    public const CONTRATS_CREATE = 'contrats.create';
+    public const CONTRATS_EDIT = 'contrats.edit';
+    public const CONTRATS_DELETE = 'contrats.delete';
+    
+    // UI control permissions (for columns visibility)
+    public const CONTRATS_VIEW_DOCUMENTS_COLUMN = 'contrats.view_documents_column';
+    public const CONTRATS_VIEW_ACTIONS_COLUMN = 'contrats.view_actions_column';
+    public const CONTRATS_VIEW_BUTTON = 'contrats.view_view_button';
+
     // ==================== DOCUMENT PERMISSIONS ====================
     
     // List/View permissions

@@ -1,0 +1,136 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}contrat - DocManager{% endblock %}
+
+{% block body %}
+	<div class="page-header">
+		<div>
+			<h1 class="page-title">👥 contrat</h1>
+			<p class="page-subtitle">Manage your contrat and their documents</p>
+		</div>
+		<div class="page-actions">
+			
+		</div>
+	</div>
+
+	{# Stats #}
+	<div class="stats-grid">
+		<div class="stat-card">
+			<div class="stat-icon cyan">👥</div>
+			<div>
+				{# <div class="stat-value">{{ contrat|length }}</div> #}
+				<div class="stat-label">Total contrat</div>
+			</div>
+		</div>
+	</div>
+
+	{# Search & Filters #}
+	<div class="card" style="padding: 1rem; margin-bottom: 1.5rem;">
+		<div class="search-box" style="max-width: 100%;">
+			<span class="search-box-icon">🔍</span>
+			<input type="search" class="form-control" placeholder="Search contrat by name or email..." id="contratearch" onkeyup="filtercontrat()">
+		</div>
+	</div>
+
+	{% if contrats is empty %}
+		<div class="card">
+			<div class="empty-state">
+				<div class="empty-state-icon">👥</div>
+				<h3>No contrat yet</h3>
+				<p>Create your first contrat to start managing documents.</p>
+				{% if is_granted('contrat.create') %}
+					<a href="{{ path('app_contrat_new') }}" class="btn btn-primary">➕ Create contrat</a>
+				{% endif %}
+			</div>
+		</div>
+	{% else %}
+		<div class="card" style="padding: 0; overflow: hidden;">
+			<div class="table-container">
+				<table id="contratTable">
+					<thead>
+						<tr>
+							<th>Name</th>
+							<th>Email</th>
+							<th>Phone</th>
+							{# Documents column - controlled by permission #}
+							{% if is_granted('contrat.view_documents_column') %}
+								<th>Documents</th>
+							{% endif %}
+							<th>Created</th>
+							{# Actions column - controlled by permission #}
+							{% if is_granted('contrat.view_actions_column') %}
+								<th>Actions</th>
+							{% endif %}
+						</tr>
+					</thead>
+					<tbody>
+						{% for contrat in contrats %}
+							<tr>
+								<td>
+									{# Name always shown, but link controlled by permission #}
+									{% if is_granted('contrat.view_details') %}
+										<a href="{{ path('app_contrat_show', {id: contrat.id}) }}" style="font-weight: 600; color: var(--text-primary);">
+											{{ contrat.nom }}
+											{{ contrat.prenom }}
+										</a>
+									{% else %}
+										<span style="font-weight: 600; color: var(--text-primary);">
+											{{ contrat.nom }}
+											{{ contrat.prenom }}
+										</span>
+									{% endif %}
+								</td>
+								<td>{{ contrat.email ?? '<span class="text-muted">—</span>'|raw }}</td>
+								<td>{{ contrat.phone ?? '<span class="text-muted">—</span>'|raw }}</td>
+								{# Documents column - controlled by permission #}
+								{% if is_granted('contrats.view_documents_column') %}
+									<td>
+										<span class="badge badge-cyan">{{ contrat.documents|length }}</span>
+									</td>
+								{% endif %}
+								{# <td class="text-muted">{{ contrat.createdAt|date('d/m/Y') }}</td> #}
+								{# Actions column - controlled by permission #}
+								{% if is_granted('contrats.view_actions_column') %}
+									<td>
+										<div style="display: flex; gap: 0.5rem;">
+											{# View button - controlled by permission #}
+											{% if is_granted('contrats.view_view_button') %}
+												<a href="{{ path('app_contrat_show', {id: contrat.id}) }}" class="btn btn-sm btn-secondary">View</a>
+											{% endif %}
+											{# Documents button - controlled by document view permission #}
+											{% if is_granted('documents.view_list') %}
+												<a href="{{ path('app_document_list', {id: contrat.id}) }}" class="btn btn-sm btn-primary" title="View Documents">📄</a>
+											{% endif %}
+										</div>
+									</td>
+								{% endif %}
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	{% endif %}
+
+	<script>
+		function filtercontrat() {
+	const input = document.getElementById('contratearch');
+	const filter = input.value.toLowerCase();
+	const table = document.getElementById('contratTable');
+	const rows = table.getElementsByTagName('tr');
+
+	for (let i = 1; i < rows.length; i++) {
+	const nameCell = rows[i].getElementsByTagName('td')[0];
+	const emailCell = rows[i].getElementsByTagName('td')[1];
+	const nameText = nameCell ? nameCell.textContent.toLowerCase() : '';
+	const emailText = emailCell ? emailCell.textContent.toLowerCase() : '';
+
+	if (nameText.includes(filter) || emailText.includes(filter)) {
+	rows[i].style.display = '';
+	} else {
+	rows[i].style.display = 'none';
+	}
+}
+}
+	</script>
+{% endblock %}

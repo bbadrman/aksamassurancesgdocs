@@ -2,9 +2,10 @@
 
 namespace App\Controller;
 
-use App\Repository\ClientRepository;
+ 
 use App\Repository\DocumentRepository;
 use App\Repository\ActivityLogRepository;
+use App\Repository\ContratRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -19,18 +20,18 @@ final class DashboardController extends AbstractController
      */
     #[Route('', name: 'app_dashboard', methods: ['GET'])]
     public function index(
-        ClientRepository $clientRepository,
+        ContratRepository $contratRepository,
         DocumentRepository $documentRepository,
         ActivityLogRepository $activityLogRepository
     ): Response {
-        $totalClients = count($clientRepository->findAll());
+        $totalContrats = count($contratRepository->findAll());
         $totalDocuments = $documentRepository->countAll();
         $recentUploads = $documentRepository->findRecent(5);
         $recentlyDeleted = $documentRepository->findRecentlyDeleted(5);
         $recentActivity = $activityLogRepository->findRecent(10);
 
         return $this->render('dashboard/index.html.twig', [
-            'totalClients' => $totalClients,
+            'totalContrats' => $totalContrats,
             'totalDocuments' => $totalDocuments,
             'recentUploads' => $recentUploads,
             'recentlyDeleted' => $recentlyDeleted,

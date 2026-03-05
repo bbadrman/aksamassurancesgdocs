@@ -2,7 +2,8 @@
 
 namespace App\Repository;
 
-use App\Entity\Client;
+ 
+use App\Entity\Contrat;
 use App\Entity\Document;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query;
@@ -19,14 +20,14 @@ class DocumentRepository extends ServiceEntityRepository
     }
 
     /**
-     * Find all non-deleted documents for a client (default behavior)
+     * Find all non-deleted documents for a contrat (default behavior)
      */
-    public function findByClient(Client $client): array
+    public function findByContrat(Contrat $contrat): array
     {
         return $this->createQueryBuilder('d')
-            ->andWhere('d.client = :client')
+            ->andWhere('d.contrat = :contrat')
             ->andWhere('d.deletedAt IS NULL')
-            ->setParameter('client', $client)
+            ->setParameter('contrat', $contrat)
             ->orderBy('d.createdAt', 'DESC')
             ->getQuery()
             ->getResult();
@@ -50,7 +51,7 @@ class DocumentRepository extends ServiceEntityRepository
      */
     public function findWithFilters(
         ?string $search = null,
-        ?Client $client = null,
+        ?Contrat $contrat = null,
         ?string $fileType = null,
         ?\DateTimeInterface $dateFrom = null,
         ?\DateTimeInterface $dateTo = null,
@@ -65,9 +66,9 @@ class DocumentRepository extends ServiceEntityRepository
                 ->setParameter('search', '%' . $search . '%');
         }
 
-        if ($client) {
-            $queryBuilder->andWhere('d.client = :client')
-                ->setParameter('client', $client);
+        if ($contrat) {
+            $queryBuilder->andWhere('d.contrat = :contrat')
+                ->setParameter('contrat', $contrat);
         }
 
         if ($fileType) {

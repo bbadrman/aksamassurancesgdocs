@@ -28,13 +28,13 @@
 						<input type="text" id="search" name="search" value="{{ filters.search|default('') }}" placeholder="Search by title or filename..." class="form-control">
 					</div>
 					<div class="filter-group">
-						<label for="client">Client</label>
-						<select id="client" name="client" class="form-control">
-							<option value="">All Clients</option>
-							{% for client in clients %}
-								<option value="{{ client.id }}" {% if filters.client and filters.client.id == client.id %} selected {% endif %}>
-									{{ client.nom }}
-									{{ client.prenom }}
+						<label for="contrat">Contrat</label>
+						<select id="contrat" name="contrat" class="form-control">
+							<option value="">All Contrats</option>
+							{% for contrat in contrats %}
+								<option value="{{ contrat.id }}" {% if filters.contrat and filters.contrat.id == contrat.id %} selected {% endif %}>
+									{{ contrat.nom }}
+									{{ contrat.prenom }}
 								</option>
 							{% endfor %}
 						</select>
@@ -80,7 +80,7 @@
 					<thead>
 						<tr>
 							<th>Title</th>
-							<th>Client</th>
+							<th>Contrat</th>
 							<th>Type</th>
 							<th>Size</th>
 							<th>Uploaded</th>
@@ -97,14 +97,14 @@
 									{% endif %}
 								</td>
 								<td>
-									{% if doc.client %}
-										{% if is_granted('CLIENT_VIEW') %}
-											<a href="{{ path('app_client_show', {id: doc.client.id}) }}">
-												{{ doc.client.nom }}
-												{{ doc.client.prenom }}
+									{% if doc.contrat %}
+										{% if is_granted('CONTRAT_VIEW') %}
+											<a href="{{ path('app_contrat_show', {id: doc.contrat.id}) }}">
+												{{ doc.contrat.nom }}
+												{{ doc.contrat.prenom }}
 											</a>
 										{% else %}
-											{{ doc.client.nom }} {{ doc.client.prenom }}
+											{{ doc.contrat.nom }} {{ doc.contrat.prenom }}
 										{% endif %}
 									{% else %}
 										<span class="text-muted">—</span>
