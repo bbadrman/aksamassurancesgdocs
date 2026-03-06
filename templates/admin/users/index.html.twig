@@ -89,14 +89,23 @@
 								{% endif %}
 							</td>
 							<td>
-								{# Hide Edit Roles button if user is admin or is the current user #}
-								{% if u.id != app.user.id and 'ROLE_ADMIN' not in u.roles %}
-									<a class="btn btn-sm btn-primary" href="{{ path('admin_users_roles', {id: u.id}) }}">
-										⚙️ Edit Roles
-									</a>
-								{% else %}
-									<span class="text-muted">—</span>
-								{% endif %}
+								<div style="display: flex; gap: 0.5rem;">
+									{# Hide Edit Roles button if user is admin or is the current user #}
+									{% if u.id != app.user.id and 'ROLE_ADMIN' not in u.roles %}
+										<a class="btn btn-sm btn-primary" href="{{ path('admin_users_roles', {id: u.id}) }}">
+											Edit Roles
+										</a>
+									{% endif %}
+									{# Change Password button - not for self #}
+									{% if u.id != app.user.id %}
+										<a class="btn btn-sm btn-secondary" href="{{ path('admin_users_password', {id: u.id}) }}">
+											Mot de passe
+										</a>
+									{% endif %}
+									{% if u.id == app.user.id %}
+										<span class="text-muted">—</span>
+									{% endif %}
+								</div>
 							</td>
 						</tr>
 					{% endfor %}

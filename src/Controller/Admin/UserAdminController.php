@@ -4,13 +4,15 @@ namespace App\Controller\Admin;
 
 use App\Entity\User;
 use App\Form\AdminUserRolesType;
+use App\Form\AdminChangePasswordType;
 use App\Enum\Permission;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response; 
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 #[Route('/admin/users')]
 class UserAdminController extends AbstractController
@@ -92,6 +94,43 @@ class UserAdminController extends AbstractController
             'form' => $form->createView(),
             'permissionGroups' => Permission::getGroups(),
             'permission_sets' => Permission::getPermissionSets(),
+        ]);
+    }
+
+    #[Route('/{id}/password', name: 'admin_users_password', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
+    public function changePassword(
+        User $user,
+        Request $request,
+        EntityManagerInterface $em,
+        UserPasswordHasherInterface $passwordHasher
+    ): Response {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        // SECURITY: Block editing self
+        $currentUser = $this->getUser();
+        if ($currentUser instanceof User && $currentUser->getId() === $user->getId()) {
+            $this->addFlash('error', 'Vous ne pouvez pas modifier votre propre mot de passe ici. Utilisez votre profil.');
+            return $this->redirectToRoute('admin_users_index');
+        }
+
+        $form = $this->createForm(AdminChangePasswordType::class);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $newPassword = $form->get('newPassword')->getData();
+
+            $hashedPassword = $passwordHasher->hashPassword($user, $newPassword);
+            $user->setPassword($hashedPassword);
+
+            $em->flush();
+
+            $this->addFlash('success', 'Mot de passe modifié avec succès pour ' . $user->getEmail());
+            return $this->redirectToRoute('admin_users_index');
+        }
+
+        return $this->render('admin/users/password.html.twig', [
+            'user' => $user,
+            'form' => $form->createView(),
         ]);
     }
 }

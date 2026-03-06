@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Document;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -16,10 +17,30 @@ class DocumentType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('title', TextType::class , [
-            'label' => 'Title',
-            'attr' => ['placeholder' => 'Document title'],
-        ])
+            ->add('title',
+                ChoiceType::class,
+                [
+                    'label' => 'Type Document ',
+                    'required' => false,
+                    'disabled' => false,
+                    'placeholder' => '--Merci de selectie-- ',
+                    'choices' => [
+                        'Atest Non Sinistre' =>  'atestNonSinistre',
+                        'Atest Non Assure' => 'atestNonAssure',
+                        'Carte Grise Definitive' => 'carteGriseDefinitive',
+                        'Devi Signe' => 'deviSigne',
+                        'Kbis' => 'kbis',
+                        'Permis' => 'permis',
+                        'Devoir Conseil' => 'devoirConseil',
+                        'Condition Générale' => 'conditionGeneral',
+                        'Mondat Sepa' => 'mondatSepa',
+                        'Bulletin d\'Adhésion' => 'bulletinAdhesion',
+
+                    ],
+                    'expanded' => false,
+                    'multiple' => false,
+                ]
+            )
             ->add('description', TextareaType::class , [
             'label' => 'Description',
             'required' => false,
