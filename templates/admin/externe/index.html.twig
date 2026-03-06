@@ -1,0 +1,277 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Admin - Users - DocManager
+{% endblock %}
+
+{% block body %}
+	<div class="page-header">
+		<div>
+			<h1 class="page-title">👥 User Management</h1>
+			<p class="page-subtitle">Manage users, roles, permissions and external links</p>
+		</div>
+	</div>
+
+	{# Stats Cards #}
+	<div class="stats-grid">
+		<div class="stat-card">
+			<div class="stat-icon cyan">👥</div>
+			<div>
+				<div class="stat-value">{{ users|length }}</div>
+				<div class="stat-label">DocManager Users</div>
+			</div>
+		</div>
+		{% set linkedCount = users|filter(u => u.externalId is not null)|length %}
+		<div class="stat-card">
+			<div class="stat-icon green">🔗</div>
+			<div>
+				<div class="stat-value">{{ linkedCount }}</div>
+				<div class="stat-label">Linked to aksamtest2</div>
+			</div>
+		</div>
+		<div class="stat-card">
+			<div class="stat-icon red">🔓</div>
+			<div>
+				<div class="stat-value">{{ users|length - linkedCount }}</div>
+				<div class="stat-label">Not linked</div>
+			</div>
+		</div>
+		<div class="stat-card">
+			<div class="stat-icon cyan">🌐</div>
+			<div>
+				<div class="stat-value">{{ externalUsers|length }}</div>
+				<div class="stat-label">aksamtest2 Users</div>
+			</div>
+		</div>
+	</div>
+
+	{% for m in app.flashes('success') %}
+		<div class="alert alert-success">{{ m }}</div>
+	{% endfor %}
+	{% for m in app.flashes('error') %}
+		<div class="alert alert-danger">{{ m }}</div>
+	{% endfor %}
+
+	{# ── DocManager Users ── #}
+	<div class="card" style="padding: 0; overflow: hidden; margin-bottom: 2rem;">
+		<div class="card-header" style="padding: 1rem 1.5rem; border-bottom: 1px solid var(--border);">
+			<h3 class="card-title" style="margin: 0;">🏠 DocManager Users</h3>
+		</div>
+		<div class="table-container">
+			<table class="table">
+				<thead>
+					<tr>
+						<th>ID</th>
+						<th>Email</th>
+						<th>Username</th>
+						<th>Roles</th>
+						<th>Access Level</th>
+						<th>aksamtest2 Link</th>
+						<th>Contrats</th>
+						<th>Actions</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for u in users %}
+						<tr>
+							<td>{{ u.id }}</td>
+							<td>
+								<a href="mailto:{{ u.email }}">{{ u.email }}</a>
+							</td>
+							<td>{{ u.username ?? '<span class="text-muted">—</span>'|raw }}</td>
+							<td>
+								{% for role in u.roles %}
+									{% if role == 'ROLE_ADMIN' %}
+										<span class="badge badge-red">{{ role }}</span>
+									{% elseif role == 'ROLE_USER' %}
+										<span class="badge badge-blue">{{ role }}</span>
+									{% else %}
+										<span class="badge badge-gray">{{ role }}</span>
+									{% endif %}
+								{% endfor %}
+							</td>
+							<td>
+								{% set level = u.permissionLevel %}
+								{% if level == 'Admin' %}
+									<span class="badge badge-red">Admin</span>
+								{% elseif level == 'Full' %}
+									<span class="badge badge-green">Full</span>
+								{% elseif level == 'Limited' %}
+									<span class="badge badge-yellow">Limited</span>
+								{% elseif level == 'Read-only' %}
+									<span class="badge badge-cyan">Read-only</span>
+								{% else %}
+									<span class="badge badge-gray">None</span>
+								{% endif %}
+							</td>
+							<td>
+								{% if u.externalId %}
+									{% set extUser = externalUsers|filter(e => e.id == u.externalId)|first %}
+									<span class="badge badge-green">
+										🔗
+										{{ extUser.username ?? 'ID ' ~ u.externalId }}
+									</span>
+									<form method="POST" action="{{ path('externe_users_unlink', {id: u.id}) }}" style="display:inline;">
+										<input type="hidden" name="_token" value="{{ csrf_token('unlink-user-' ~ u.id) }}">
+										<button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Supprimer le lien ?')" style="margin-left: 0.5rem;">✕</button>
+									</form>
+								{% else %}
+									<span class="badge badge-gray">Non lié</span>
+								{% endif %}
+							</td>
+							<td>
+								<span class="badge badge-cyan">{{ u.contrats|length }}</span>
+							</td>
+							<td>
+								<div style="display: flex; gap: 0.5rem; align-items: center;">
+									{% if u.id != app.user.id and 'ROLE_ADMIN' not in u.roles %}
+										<a class="btn btn-sm btn-primary" href="{{ path('admin_users_roles', {id: u.id}) }}">
+											⚙️ Roles
+										</a>
+									{% endif %}
+									{% if u.externalId is null %}
+										{# Dropdown pour lier à un user externe #}
+										<div style="position: relative;">
+											<button class="btn btn-sm btn-secondary" onclick="toggleLinkDropdown({{ u.id }})">
+												🔗 Lier
+											</button>
+											<div id="link-dropdown-{{ u.id }}" style="display:none; position:absolute; top:100%; left:0; z-index:100;
+																																																				                                                background:white; border:1px solid #ddd; border-radius:4px;
+																																																				                                                min-width:200px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
+												{% if externalUsers is empty %}
+													<div style="padding: 0.75rem; color: #999;">Aucun user externe</div>
+												{% else %}
+													{% for ext in externalUsers %}
+														{# Vérifier si ce user externe est déjà lié #}
+														{% set alreadyLinked = users|filter(lu => lu.externalId == ext.id)|length > 0 %}
+														{% if not alreadyLinked %}
+															<form method="POST" action="{{ path('externe_users_link', {id: u.id, externalId: ext.id}) }}">
+																<input type="hidden" name="_token" value="{{ csrf_token('link-user-' ~ u.id) }}">
+																<button type="submit" style="width:100%; text-align:left; padding:0.75rem;
+																																																																								                                                                   background:none; border:none; cursor:pointer;
+																																																																								                                                                   border-bottom:1px solid #eee;">
+																	{{ ext.username }}
+																	<span style="color:#999; font-size:0.8rem;">
+																		({{ ext.firstname ?? '' }}
+																		{{ ext.lastname ?? '' }})
+																	</span>
+																</button>
+															</form>
+														{% endif %}
+													{% endfor %}
+												{% endif %}
+											</div>
+										</div>
+									{% endif %}
+								</div>
+							</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	{# ── aksamtest2 Users ── #}
+	<div class="card" style="padding: 0; overflow: hidden; margin-bottom: 2rem;">
+		<div class="card-header" style="padding: 1rem 1.5rem; border-bottom: 1px solid var(--border);">
+			<h3 class="card-title" style="margin: 0;">🌐 aksamtest2 Users</h3>
+		</div>
+		<div class="table-container">
+			<table class="table">
+				<thead>
+					<tr>
+						<th>ID</th>
+						<th>Username</th>
+						<th>Nom / Prénom</th>
+						<th>Rôles</th>
+						<th>Contrats</th>
+						<th>Lié à</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% if externalUsers is empty %}
+						<tr>
+							<td colspan="6" style="text-align:center; padding: 2rem; color: #999;">
+								Aucun user externe chargé
+							</td>
+						</tr>
+					{% else %}
+						{% for ext in externalUsers %}
+							{% set linkedLocalUser = users|filter(u => u.externalId == ext.id)|first|default(null) %}
+							<tr>
+								<td>{{ ext.id }}</td>
+								<td>
+									<strong>{{ ext.username }}</strong>
+								</td>
+								<td>{{ (ext.firstname ?? '') }}
+									{{ (ext.lastname ?? '') }}</td>
+								 
+								<td>
+									<span class="badge badge-cyan">{{ ext.contrats is iterable ? ext.contrats|length : 0 }}</span>
+								</td>
+								<td>
+									{% if linkedLocalUser is not null %}
+										<span class="badge badge-green">
+											🔗
+											{{ linkedLocalUser.email }}
+										</span>
+									{% else %}
+										<span class="badge badge-gray">Non lié</span>
+									{% endif %}
+								</td>
+							</tr>
+						{% endfor %}
+					{% endif %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	{# Legend #}
+	<div class="card" style="max-width: 600px;">
+		<div class="card-header">
+			<h3 class="card-title" style="margin: 0; font-size: 1rem;">📋 Access Level Legend</h3>
+		</div>
+		<div class="card-body">
+			<div style="display: flex; flex-wrap: wrap; gap: 1rem;">
+				<div style="display: flex; align-items: center; gap: 0.5rem;">
+					<span class="badge badge-red">Admin</span>
+					<span class="text-muted">Full system access</span>
+				</div>
+				<div style="display: flex; align-items: center; gap: 0.5rem;">
+					<span class="badge badge-green">Full</span>
+					<span class="text-muted">Full access (clients & documents)</span>
+				</div>
+				<div style="display: flex; align-items: center; gap: 0.5rem;">
+					<span class="badge badge-yellow">Limited</span>
+					<span class="text-muted">View & upload documents</span>
+				</div>
+				<div style="display: flex; align-items: center; gap: 0.5rem;">
+					<span class="badge badge-cyan">Read-only</span>
+					<span class="text-muted">View lists & details only</span>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		function toggleLinkDropdown(userId) { // Fermer tous les autres dropdowns
+document.querySelectorAll('[id^="link-dropdown-"]').forEach(el => {
+if (el.id !== 'link-dropdown-' + userId) {
+el.style.display = 'none';
+}
+});
+const el = document.getElementById('link-dropdown-' + userId);
+el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+// Fermer les dropdowns en cliquant ailleurs
+document.addEventListener('click', function (e) {
+if (! e.target.closest('[id^="link-dropdown-"]') && ! e.target.closest('button[onclick^="toggleLinkDropdown"]')) {
+document.querySelectorAll('[id^="link-dropdown-"]').forEach(el => {
+el.style.display = 'none';
+});
+}
+});
+	</script>
+{% endblock %}

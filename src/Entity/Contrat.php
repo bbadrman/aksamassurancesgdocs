@@ -36,6 +36,10 @@ class Contrat
     #[ORM\OneToMany(targetEntity: Document::class, mappedBy: 'contrat', orphanRemoval: true)]
     private Collection $documents;
 
+    #[ORM\ManyToOne(inversedBy: 'contrats')]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?User $user = null;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -134,6 +138,18 @@ class Contrat
     public function __toString(): string
     {
         return $this->nom . ' ' . $this->prenom;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
+
+        return $this;
     }
 
 
