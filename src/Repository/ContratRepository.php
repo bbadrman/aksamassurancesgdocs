@@ -16,28 +16,23 @@ class ContratRepository extends ServiceEntityRepository
         parent::__construct($registry, Contrat::class);
     }
 
-    //    /**
-    //     * @return Contrat[] Returns an array of Contrat objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('c')
-    //            ->andWhere('c.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('c.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    public function findPaginated(int $page = 1, int $limit = 10): array
+{
+    $offset = ($page - 1) * $limit;
 
-    //    public function findOneBySomeField($value): ?Contrat
-    //    {
-    //        return $this->createQueryBuilder('c')
-    //            ->andWhere('c.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    return $this->createQueryBuilder('c')
+        ->orderBy('c.id', 'ASC')
+        ->setFirstResult($offset)
+        ->setMaxResults($limit)
+        ->getQuery()
+        ->getResult();
+}
+
+public function countAll(): int
+{
+    return (int) $this->createQueryBuilder('c')
+        ->select('COUNT(c.id)')
+        ->getQuery()
+        ->getSingleScalarResult();
+}
 }

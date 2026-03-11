@@ -18,7 +18,7 @@
 		<div class="stat-card">
 			<div class="stat-icon cyan">👥</div>
 			<div>
-				{# <div class="stat-value">{{ contrat|length }}</div> #}
+				<div class="stat-value">{{ totalContrats }}</div>
 				<div class="stat-label">Total contrat</div>
 			</div>
 		</div>
@@ -49,11 +49,11 @@
 				<table id="contratTable">
 					<thead>
 						<tr>
+						   <th>id</th>
 							<th>Name</th>
-							<th>Email</th>
-							<th>Phone</th>
+							 
 							{# Documents column - controlled by permission #}
-							{% if is_granted('contrat.view_documents_column') %}
+							{% if is_granted('contrats.view_documents_column') %}
 								<th>Documents</th>
 							{% endif %}
 							<th>Created</th>
@@ -66,6 +66,7 @@
 					<tbody>
 						{% for contrat in contrats %}
 							<tr>
+								<td>{{ contrat.id }}</td>
 								<td>
 									{# Name always shown, but link controlled by permission #}
 									{% if is_granted('contrat.view_details') %}
@@ -80,8 +81,8 @@
 										</span>
 									{% endif %}
 								</td>
-								<td>{{ contrat.email ?? '<span class="text-muted">—</span>'|raw }}</td>
-								<td>{{ contrat.phone ?? '<span class="text-muted">—</span>'|raw }}</td>
+								{# <td>{{ contrat.email ?? '<span class="text-muted">—</span>'|raw }}</td>
+								<td>{{ contrat.phone ?? '<span class="text-muted">—</span>'|raw }}</td> #}
 								{# Documents column - controlled by permission #}
 								{% if is_granted('contrats.view_documents_column') %}
 									<td>
@@ -107,7 +108,27 @@
 							</tr>
 						{% endfor %}
 					</tbody>
+					
 				</table>
+				{% if totalPages > 1 %}
+    <div class="card" style="padding: 1rem; margin-top: 1rem;">
+        <div style="display: flex; justify-content: center; gap: 0.5rem; align-items: center;">
+            {% if currentPage > 1 %}
+                <a href="{{ path('app_contrat_index', {page: currentPage - 1}) }}" class="btn btn-sm btn-secondary">
+                    ← Précédent
+                </a>
+            {% endif %}
+
+            <span>Page {{ currentPage }} / {{ totalPages }}</span>
+
+            {% if currentPage < totalPages %}
+                <a href="{{ path('app_contrat_index', {page: currentPage + 1}) }}" class="btn btn-sm btn-secondary">
+                    Suivant →
+                </a>
+            {% endif %}
+        </div>
+    </div>
+{% endif %}
 			</div>
 		</div>
 	{% endif %}

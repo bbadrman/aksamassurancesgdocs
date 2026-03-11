@@ -25,21 +25,29 @@ final class ContratController extends AbstractController
         private ContratSyncService $contratSyncService,
     ) {}
 
-    #[Route('', name: 'app_contrat_index', methods: ['GET'])]
-    public function index(ContratRepository $contratRepository): Response
-    {
-
-     try {
-        $contrats = $this->contratSyncService->syncAndGetClients();
+   #[Route('', name: 'app_contrat_index', methods: ['GET'])]
+public function index(Request $request, ContratRepository $contratRepository): Response
+{
+    try {
+        $this->contratSyncService->syncAndGetContrats();
     } catch (\Exception $e) {
-        $this->addFlash('error', 'Impossible de charger les clients : ' . $e->getMessage());
-        $contrats = $this->contratRepository->findAll(); // fallback BDD locale
+        // fallback silencieux
     }
 
-        return $this->render('contrat/index.html.twig', [
-            'contrats' => $contrats,
-        ]);
-    }
+    $page = max(1, $request->query->getInt('page', 1));
+    $limit = 10;
+
+    $contrats = $contratRepository->findPaginated($page, $limit);
+    $totalContrats = $contratRepository->countAll();
+    $totalPages = (int) ceil($totalContrats / $limit);
+
+    return $this->render('contrat/index.html.twig', [
+        'contrats' => $contrats,
+        'currentPage' => $page,
+        'totalPages' => $totalPages,
+        'totalContrats' => $totalContrats,
+    ]);
+}
 
   
 
@@ -51,12 +59,6 @@ final class ContratController extends AbstractController
             'contrat' => $contrat,
         ]);
     }
-
-   
-   
-
-    
-
-
-    
+ 
+ 
 }
