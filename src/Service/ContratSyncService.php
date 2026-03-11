@@ -19,15 +19,22 @@ class ContratSyncService
      * Récupère les clients externes et les synchronise localement
      * Retourne la liste des clients locaux avec leurs documents
      */
-    public function syncAndGetClients(): array
+    public function syncAndGetContrats(): array
     {
-        $response = $this->httpClient->request('GET', 'https://ddev-aksamtest2-web/api/contrats', [
+        $page = 1;
+        
+
+        $response = $this->httpClient->request('GET', 'https://ddev-aksamv2-web/api/contrats', [
             'verify_peer' => false,
             'verify_host' => false,
             'headers' => [
-                'Host'   => 'aksamtest2.ddev.site',
+                'Host'   => 'aksamv2.ddev.site',
                 'Accept' => 'application/json',
             ],
+              'query' => [
+                    'page' => $page,
+                    'itemsPerPage' => 10,
+                ],
         ]);
 
         $data = json_decode($response->getContent(false), true);
