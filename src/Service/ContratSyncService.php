@@ -1,10 +1,10 @@
 <?php
+
 namespace App\Service;
 
-use App\Entity\Contrat;
-use App\Repository\ClientRepository;
 use App\Repository\ContratRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class ContratSyncService
@@ -13,88 +13,103 @@ class ContratSyncService
         private HttpClientInterface $httpClient,
         private ContratRepository $contratRepository,
         private EntityManagerInterface $em,
+        private RequestStack $requestStack,
     ) {}
 
-    /**
-     * Récupère les clients externes et les synchronise localement
-     * Retourne la liste des clients locaux avec leurs documents
-     */
     public function syncAndGetContrats(): array
-    {
-        $page = 1;
-        $hasMore = true;
+{
+    $session = $this->requestStack->getSession();
+    $lastSync = $session->get('contrat_last_sync', 0);
 
-        while ($hasMore) {
-            $response = $this->httpClient->request('GET', 'https://aksam.azurewebsites.net/api/contrats', [
-                'verify_peer' => false,
-                'verify_host' => false,
-                'headers' => [
-                    'Accept' => 'application/json',
-                ],
-                'query' => [
-                    'page' => $page,
-                ],
-            ]);
-
-            $data = json_decode($response->getContent(false), true);
-            $externalClients = $data['member'] 
-                ?? $data['hydra:member'] 
-                ?? (is_array($data) && array_is_list($data) ? $data : []);
-
-            if (empty($externalClients)) {
-                break;
-            }
-
-            foreach ($externalClients as $externalClient) {
-                $this->syncClient($externalClient);
-            }
-
-            // Flush par page pour isoler les erreurs
-            try {
-                $this->em->flush();
-                $this->em->clear(); // libère la mémoire
-            } catch (\Exception $e) {
-                // En cas d'erreur sur cette page, on continue avec la suivante
-                $this->em->clear();
-            }
-
-            if (isset($data['hydra:view'])) {
-                if (isset($data['hydra:view']['hydra:next'])) {
-                    $page++;
-                } else {
-                    $hasMore = false;
-                }
-            } elseif (count($externalClients) > 0) {
-                $page++;
-            } else {
-                $hasMore = false;
-            }
-
-            // Sécurité anti-boucle infinie (max 100 pages)
-            if ($page > 100) {
-                break;
-            }
-        }
-
-        // Retourne les clients locaux avec leurs documents
+    if (time() - $lastSync < 1800) {
         return $this->contratRepository->findAll();
     }
 
-    private function syncClient(array $data): void
-    {
-        $externalId = $data['id'];
+    $conn = $this->em->getConnection();
+    $page = 1;
+    $synced = 0;
 
-        // Chercher le client local par externalId
-        $client = $this->contratRepository->findOneBy(['externalId' => $externalId]);
+    while (true) {
+        $response = $this->httpClient->request('GET', 'https://aksam.azurewebsites.net/api/contrats', [
+    'verify_peer' => false,
+    'verify_host' => false,
+    'headers'     => ['Accept' => 'application/ld+json'],  // ← changer
+    'query'       => [
+        'page'  => $page,
+        'limit' => 100,
+    ],
+]);
 
-        if (!$client) {
-            $client = new Contrat();
-            $client->setExternalId($externalId);
-            $this->em->persist($client);
+$data = json_decode($response->getContent(false), true);
+
+        if (!is_array($data)) {
+            break;
         }
 
-        // Mettre à jour les données depuis l'API externe
-        $client->setNom(mb_substr($data['nom'] ?? '', 0, 20));
-        $client->setPrenom(mb_substr($data['prenom'] ?? '', 0, 20));
+        $items = $data['member'] ?? $data['hydra:member'] ?? [];
+
+        if (empty($items)) {
+            break;
+        }
+
+        foreach ($items as $item) {
+            $this->upsertContrat($conn, $item);
+            $synced++;
+        }
+
+        error_log("[ContratSync] Page $page — $synced contrats");
+
+        // L'API utilise 'view' (pas 'hydra:view')
+        $hasNext = isset($data['view']['next'])
+            || isset($data['hydra:view']['hydra:next']);
+
+        if (!$hasNext || $page >= 200) {
+            break;
+        }
+
+        $page++;
+    }
+
+    error_log('[DEBUG] Clés: ' . implode(', ', array_keys($data ?? [])));
+error_log('[DEBUG] member count: ' . count($data['member'] ?? []));
+$items = $data['member'] ?? $data['hydra:member'] ?? [];
+    $session->set('contrat_last_sync', time());
+
+    return $this->contratRepository->findAll();
+}
+
+    private function getNextPage(array $data, int $currentPage, int $itemCount): ?int
+    {
+        // Cas 1 : hydra:view avec hydra:next
+        if (isset($data['hydra:view']['hydra:next'])) {
+            return $currentPage + 1;
+        }
+
+        // Cas 2 : view avec next
+        if (isset($data['view']['next'])) {
+            return $currentPage + 1;
+        }
+
+        // Cas 3 : calculer via totalItems
+        $total = (int) ($data['hydra:totalItems'] ?? $data['totalItems'] ?? 0);
+        if ($total > 0 && ($currentPage * $itemCount) < $total) {
+            return $currentPage + 1;
+        }
+
+        return null;
+    }
+
+    private function upsertContrat(\Doctrine\DBAL\Connection $conn, array $data): void
+    {
+        $externalId = (int) $data['id'];
+        $nom        = mb_substr($data['nom'] ?? '', 0, 20);
+        $prenom     = mb_substr($data['prenom'] ?? '', 0, 20);
+
+        $conn->executeStatement(
+            'INSERT INTO contrat (nom, prenom, raison_sociale, external_id, created_at, user_id)
+             VALUES (?, ?, NULL, ?, NOW(), NULL)
+             ON DUPLICATE KEY UPDATE nom = VALUES(nom), prenom = VALUES(prenom)',
+            [$nom, $prenom, $externalId]
+        );
     }
 }

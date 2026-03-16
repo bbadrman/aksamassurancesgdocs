@@ -28,6 +28,7 @@ final class ContratController extends AbstractController
    #[Route('', name: 'app_contrat_index', methods: ['GET'])]
 public function index(Request $request, ContratRepository $contratRepository): Response
 {
+    //  $request->getSession()->remove('contrat_last_sync');
     try {
         $this->contratSyncService->syncAndGetContrats();
     } catch (\Exception $e) {
