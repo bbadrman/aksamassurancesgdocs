@@ -22,31 +22,59 @@ class ContratSyncService
     public function syncAndGetContrats(): array
     {
         $page = 1;
-        
+        $hasMore = true;
 
-        $response = $this->httpClient->request('GET', 'https://ddev-aksamv2-web/api/contrats', [
-            'verify_peer' => false,
-            'verify_host' => false,
-            'headers' => [
-                'Host'   => 'aksamv2.ddev.site',
-                'Accept' => 'application/json',
-            ],
-              'query' => [
-                    'page' => $page,
-                    'itemsPerPage' => 10,
+        while ($hasMore) {
+            $response = $this->httpClient->request('GET', 'https://aksam.azurewebsites.net/api/contrats', [
+                'verify_peer' => false,
+                'verify_host' => false,
+                'headers' => [
+                    'Accept' => 'application/json',
                 ],
-        ]);
+                'query' => [
+                    'page' => $page,
+                ],
+            ]);
 
-        $data = json_decode($response->getContent(false), true);
-        $externalClients = $data['member'] 
-            ?? $data['hydra:member'] 
-            ?? (array_is_list($data) ? $data : []);
+            $data = json_decode($response->getContent(false), true);
+            $externalClients = $data['member'] 
+                ?? $data['hydra:member'] 
+                ?? (is_array($data) && array_is_list($data) ? $data : []);
 
-        foreach ($externalClients as $externalClient) {
-            $this->syncClient($externalClient);
+            if (empty($externalClients)) {
+                break;
+            }
+
+            foreach ($externalClients as $externalClient) {
+                $this->syncClient($externalClient);
+            }
+
+            // Flush par page pour isoler les erreurs
+            try {
+                $this->em->flush();
+                $this->em->clear(); // libère la mémoire
+            } catch (\Exception $e) {
+                // En cas d'erreur sur cette page, on continue avec la suivante
+                $this->em->clear();
+            }
+
+            if (isset($data['hydra:view'])) {
+                if (isset($data['hydra:view']['hydra:next'])) {
+                    $page++;
+                } else {
+                    $hasMore = false;
+                }
+            } elseif (count($externalClients) > 0) {
+                $page++;
+            } else {
+                $hasMore = false;
+            }
+
+            // Sécurité anti-boucle infinie (max 100 pages)
+            if ($page > 100) {
+                break;
+            }
         }
-
-        $this->em->flush();
 
         // Retourne les clients locaux avec leurs documents
         return $this->contratRepository->findAll();
@@ -66,7 +94,7 @@ class ContratSyncService
         }
 
         // Mettre à jour les données depuis l'API externe
-        $client->setNom($data['nom']    ?? '');
-        $client->setPrenom($data['prenom'] ?? ''); 
+        $client->setNom(mb_substr($data['nom'] ?? '', 0, 20));
+        $client->setPrenom(mb_substr($data['prenom'] ?? '', 0, 20));
     }
 }

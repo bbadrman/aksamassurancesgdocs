@@ -31,7 +31,9 @@ public function index(Request $request, ContratRepository $contratRepository): R
     try {
         $this->contratSyncService->syncAndGetContrats();
     } catch (\Exception $e) {
-        // fallback silencieux
+        // Log l'erreur pour debug
+        error_log('[ContratSync] ERREUR: ' . $e->getMessage() . ' | ' . $e->getFile() . ':' . $e->getLine());
+        // fallback : on continue quand même
     }
 
     $page = max(1, $request->query->getInt('page', 1));
