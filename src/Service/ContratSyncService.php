@@ -105,11 +105,23 @@ $items = $data['member'] ?? $data['hydra:member'] ?? [];
         $nom        = mb_substr($data['nom'] ?? '', 0, 20);
         $prenom     = mb_substr($data['prenom'] ?? '', 0, 20);
 
-        $conn->executeStatement(
-            'INSERT INTO contrat (nom, prenom, raison_sociale, external_id, created_at, user_id)
-             VALUES (?, ?, NULL, ?, NOW(), NULL)
-             ON DUPLICATE KEY UPDATE nom = VALUES(nom), prenom = VALUES(prenom)',
-            [$nom, $prenom, $externalId]
+        // Verification de l'existence pour eviter les doublons
+        $existingId = $conn->fetchOne(
+            'SELECT id FROM contrat WHERE external_id = ?',
+            [$externalId]
         );
+
+        if ($existingId) {
+            $conn->executeStatement(
+                'UPDATE contrat SET nom = ?, prenom = ? WHERE id = ?',
+                [$nom, $prenom, $existingId]
+            );
+        } else {
+            $conn->executeStatement(
+                'INSERT INTO contrat (nom, prenom, raison_sociale, external_id, created_at, user_id)
+                 VALUES (?, ?, NULL, ?, NOW(), NULL)',
+                [$nom, $prenom, $externalId]
+            );
+        }
     }
 }
