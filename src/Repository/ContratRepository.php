@@ -21,7 +21,7 @@ class ContratRepository extends ServiceEntityRepository
     $offset = ($page - 1) * $limit;
 
     return $this->createQueryBuilder('c')
-        ->orderBy('c.id', 'ASC')
+        ->orderBy('c.id', 'DESC')
         ->setFirstResult($offset)
         ->setMaxResults($limit)
         ->getQuery()

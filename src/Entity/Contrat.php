@@ -40,6 +40,9 @@ class Contrat
     #[ORM\JoinColumn(nullable: true)]
     private ?User $user = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $externalUserId = null;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -148,6 +151,18 @@ class Contrat
     public function setUser(?User $user): static
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getExternalUserId(): ?int
+    {
+        return $this->externalUserId;
+    }
+
+    public function setExternalUserId(?int $externalUserId): static
+    {
+        $this->externalUserId = $externalUserId;
 
         return $this;
     }
