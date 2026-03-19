@@ -6,20 +6,7 @@ final class Permission
 {
     // ==================== CLIENT PERMISSIONS ====================
     
-    // List/View permissions
-    public const CLIENTS_VIEW_LIST = 'clients.view_list';
-    public const CLIENTS_VIEW_DETAILS = 'clients.view_details';
     
-    // Action permissions
-    public const CLIENTS_CREATE = 'clients.create';
-    public const CLIENTS_EDIT = 'clients.edit';
-    public const CLIENTS_DELETE = 'clients.delete';
-    
-    // UI control permissions (for columns visibility)
-    public const CLIENTS_VIEW_DOCUMENTS_COLUMN = 'clients.view_documents_column';
-    public const CLIENTS_VIEW_ACTIONS_COLUMN = 'clients.view_actions_column';
-    public const CLIENTS_VIEW_BUTTON = 'clients.view_view_button';
-
 
     // ==================== CONTRAT PERMISSIONS ====================
     
@@ -63,16 +50,18 @@ final class Permission
     public static function getGroups(): array
     {
         return [
-            'Clients' => [
-                self::CLIENTS_VIEW_LIST => 'View Clients List',
-                self::CLIENTS_VIEW_DETAILS => 'View Client Details',
-                self::CLIENTS_CREATE => 'Create Clients',
-                self::CLIENTS_EDIT => 'Edit Clients',
-                self::CLIENTS_DELETE => 'Delete Clients',
-                self::CLIENTS_VIEW_DOCUMENTS_COLUMN => 'See Documents Column',
-                self::CLIENTS_VIEW_ACTIONS_COLUMN => 'See Actions Column',
-                self::CLIENTS_VIEW_BUTTON => 'See View Button',
+            'Contrats' => [
+                self::CONTRATS_VIEW_LIST => 'View Contrats List',
+                self::CONTRATS_VIEW_DETAILS => 'View Contrat Details',
+                self::CONTRATS_CREATE => 'Create Contrats',
+                self::CONTRATS_EDIT => 'Edit Contrats',
+                self::CONTRATS_DELETE => 'Delete Contrats',
+                self::CONTRATS_VIEW_DOCUMENTS_COLUMN => 'See Documents Column',
+                self::CONTRATS_VIEW_ACTIONS_COLUMN => 'See Actions Column',
+                self::CONTRATS_VIEW_BUTTON => 'See View Button',
             ],
+ 
+             
             'Documents' => [
                 self::DOCUMENTS_VIEW_LIST => 'View Documents List',
                 self::DOCUMENTS_VIEW_DETAILS => 'View Document Details',
@@ -109,9 +98,9 @@ final class Permission
     public static function getUIPermissions(): array
     {
         return [
-            self::CLIENTS_VIEW_DOCUMENTS_COLUMN,
-            self::CLIENTS_VIEW_ACTIONS_COLUMN,
-            self::CLIENTS_VIEW_BUTTON,
+            self::CONTRATS_VIEW_DOCUMENTS_COLUMN,
+            self::CONTRATS_VIEW_ACTIONS_COLUMN,
+            self::CONTRATS_VIEW_BUTTON,
         ];
     }
 
@@ -131,11 +120,11 @@ final class Permission
     public static function getReadOnlyPermissions(): array
     {
         return [
-            self::CLIENTS_VIEW_LIST,
-            self::CLIENTS_VIEW_DETAILS,
-            self::CLIENTS_VIEW_DOCUMENTS_COLUMN,
-            self::CLIENTS_VIEW_ACTIONS_COLUMN,
-            self::CLIENTS_VIEW_BUTTON,
+            self::CONTRATS_VIEW_LIST,
+            self::CONTRATS_VIEW_DETAILS,
+            self::CONTRATS_VIEW_DOCUMENTS_COLUMN,
+            self::CONTRATS_VIEW_ACTIONS_COLUMN,
+            self::CONTRATS_VIEW_BUTTON,
             self::DOCUMENTS_VIEW_LIST,
             self::DOCUMENTS_VIEW_DETAILS,
             self::DOCUMENTS_DOWNLOAD,
@@ -143,16 +132,16 @@ final class Permission
     }
 
     /**
-     * Client-view-only: Can view clients and their documents
+     * contrat-view-only: Can view contrats and their documents
      */
     public static function getClientViewOnlyPermissions(): array
     {
         return [
-            self::CLIENTS_VIEW_LIST,
-            self::CLIENTS_VIEW_DETAILS,
-            self::CLIENTS_VIEW_DOCUMENTS_COLUMN,
-            self::CLIENTS_VIEW_ACTIONS_COLUMN,
-            self::CLIENTS_VIEW_BUTTON,
+            self::CONTRATS_VIEW_LIST,
+            self::CONTRATS_VIEW_DETAILS,
+            self::CONTRATS_VIEW_DOCUMENTS_COLUMN,
+            self::CONTRATS_VIEW_ACTIONS_COLUMN,
+            self::CONTRATS_VIEW_BUTTON,
             self::DOCUMENTS_VIEW_LIST,
             self::DOCUMENTS_VIEW_DETAILS,
             self::DOCUMENTS_DOWNLOAD,
@@ -160,16 +149,16 @@ final class Permission
     }
 
     /**
-     * Limited: Can view and upload documents, but not edit/delete clients
+     * Limited: Can view and upload documents, but not edit/delete contrats
      */
     public static function getLimitedPermissions(): array
     {
         return [
-            self::CLIENTS_VIEW_LIST,
-            self::CLIENTS_VIEW_DETAILS,
-            self::CLIENTS_VIEW_DOCUMENTS_COLUMN,
-            self::CLIENTS_VIEW_ACTIONS_COLUMN,
-            self::CLIENTS_VIEW_BUTTON,
+            self::CONTRATS_VIEW_LIST,
+            self::CONTRATS_VIEW_DETAILS,
+            self::CONTRATS_VIEW_DOCUMENTS_COLUMN,
+            self::CONTRATS_VIEW_ACTIONS_COLUMN,
+            self::CONTRATS_VIEW_BUTTON,
             self::DOCUMENTS_VIEW_LIST,
             self::DOCUMENTS_VIEW_DETAILS,
             self::DOCUMENTS_CREATE_UPLOAD,
@@ -184,14 +173,14 @@ final class Permission
     public static function getFullPermissions(): array
     {
         return [
-            self::CLIENTS_VIEW_LIST,
-            self::CLIENTS_VIEW_DETAILS,
-            self::CLIENTS_CREATE,
-            self::CLIENTS_EDIT,
-            self::CLIENTS_DELETE,
-            self::CLIENTS_VIEW_DOCUMENTS_COLUMN,
-            self::CLIENTS_VIEW_ACTIONS_COLUMN,
-            self::CLIENTS_VIEW_BUTTON,
+            self::CONTRATS_VIEW_LIST,
+            self::CONTRATS_VIEW_DETAILS,
+            self::CONTRATS_CREATE,
+            self::CONTRATS_EDIT,
+            self::CONTRATS_DELETE,
+            self::CONTRATS_VIEW_DOCUMENTS_COLUMN,
+            self::CONTRATS_VIEW_ACTIONS_COLUMN,
+            self::CONTRATS_VIEW_BUTTON,
             self::DOCUMENTS_VIEW_LIST,
             self::DOCUMENTS_VIEW_DETAILS,
             self::DOCUMENTS_CREATE_UPLOAD,
@@ -212,9 +201,9 @@ final class Permission
                 'description' => 'Can view lists and details only',
                 'permissions' => self::getReadOnlyPermissions(),
             ],
-            'client_view_only' => [
-                'label' => 'Client-view-only',
-                'description' => 'Can view clients and documents',
+            'contrat_view_only' => [
+                'label' => 'Contrat-view-only',
+                'description' => 'Can view contrats and documents',
                 'permissions' => self::getClientViewOnlyPermissions(),
             ],
             'limited' => [
@@ -239,14 +228,14 @@ final class Permission
      * Get default permissions for a role
      * Note: Admin gets all permissions automatically in the voter
      * 
-     * DEFAULT BEHAVIOR: Users have FULL ACCESS by default (add clients, documents, etc.)
+     * DEFAULT BEHAVIOR: Users have FULL ACCESS by default (add contrat, documents, etc.)
      * Admin can restrict permissions by explicitly setting them.
      */
     public static function getDefaultsForRole(string $role): array
     {
         return match ($role) {
             'ROLE_ADMIN' => self::getAll(),
-            // Default: Users have full access (can add clients, documents, etc.)
+            // Default: Users have full access (can add contrat, documents, etc.)
             // Admin can restrict this by explicitly setting permissions
             'ROLE_USER' => self::getFullPermissions(),
             default => [],
@@ -262,22 +251,22 @@ final class Permission
             return 'None';
         }
 
-        $hasFullClients = in_array(self::CLIENTS_CREATE, $permissions, true) 
-            && in_array(self::CLIENTS_EDIT, $permissions, true) 
-            && in_array(self::CLIENTS_DELETE, $permissions, true);
+        $hasFullContrats = in_array(self::CONTRATS_CREATE, $permissions, true) 
+            && in_array(self::CONTRATS_EDIT, $permissions, true) 
+            && in_array(self::CONTRATS_DELETE, $permissions, true);
             
         $hasFullDocs = in_array(self::DOCUMENTS_CREATE_UPLOAD, $permissions, true) 
             && in_array(self::DOCUMENTS_EDIT, $permissions, true) 
             && in_array(self::DOCUMENTS_DELETE, $permissions, true);
 
-        if ($hasFullClients && $hasFullDocs) {
+        if ($hasFullContrats && $hasFullDocs) {
             return 'Full';
         }
 
-        $hasViewOnly = in_array(self::CLIENTS_VIEW_LIST, $permissions, true) 
-            && !in_array(self::CLIENTS_CREATE, $permissions, true)
-            && !in_array(self::CLIENTS_EDIT, $permissions, true)
-            && !in_array(self::CLIENTS_DELETE, $permissions, true);
+        $hasViewOnly = in_array(self::CONTRATS_VIEW_LIST, $permissions, true) 
+            && !in_array(self::CONTRATS_CREATE, $permissions, true)
+            && !in_array(self::CONTRATS_EDIT, $permissions, true)
+            && !in_array(self::CONTRATS_DELETE, $permissions, true);
 
         if ($hasViewOnly) {
             return 'Read-only';

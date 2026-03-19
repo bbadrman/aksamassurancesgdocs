@@ -28,11 +28,7 @@ final class ContratController extends AbstractController
    #[Route('', name: 'app_contrat_index', methods: ['GET'])]
 public function index(Request $request, ContratRepository $contratRepository): Response
 {
-    try {
-        $this->contratSyncService->syncAndGetContrats();
-    } catch (\Exception $e) {
-        error_log('[ContratSync] ERREUR: ' . $e->getMessage() . ' | ' . $e->getFile() . ':' . $e->getLine());
-    }
+    // Synchronisation desactivee - utiliser: php bin/console app:sync-contrats
 
     $page = max(1, $request->query->getInt('page', 1));
     $limit = 10;
@@ -54,6 +50,24 @@ public function index(Request $request, ContratRepository $contratRepository): R
 
   
 
+    #[Route('/sync', name: 'app_contrat_sync', methods: ['POST'])]
+    public function sync(Request $request): Response
+    {
+        if (!$this->isCsrfTokenValid('sync-contrats', $request->request->get('_token'))) {
+            $this->addFlash('error', 'Token CSRF invalide');
+            return $this->redirectToRoute('app_contrat_index');
+        }
+
+        try {
+            $contrats = $this->contratSyncService->syncAndGetContrats();
+            $this->addFlash('success', sprintf('Synchronisation reussie : %d contrats', count($contrats)));
+        } catch (\Exception $e) {
+            $this->addFlash('error', 'Erreur de synchronisation : ' . $e->getMessage());
+        }
+
+        return $this->redirectToRoute('app_contrat_index');
+    }
+
     #[Route('/{id}', name: 'app_contrat_show', methods: ['GET'])]
     #[IsGranted(Permission::CONTRATS_VIEW_DETAILS)]
     public function show(Contrat $contrat): Response
@@ -62,6 +76,4 @@ public function index(Request $request, ContratRepository $contratRepository): R
             'contrat' => $contrat,
         ]);
     }
- 
- 
 }

@@ -5,13 +5,26 @@
 {% block body %}
 	<div class="page-header">
 		<div>
-			<h1 class="page-title">👥 contrat</h1>
-			<p class="page-subtitle">Manage your contrat and their documents</p>
+			<h1 class="page-title">Contrats</h1>
+			<p class="page-subtitle">Gestion des contrats et documents</p>
 		</div>
 		<div class="page-actions">
-			
+			<form method="POST" action="{{ path('app_contrat_sync') }}" style="display: inline;">
+				<input type="hidden" name="_token" value="{{ csrf_token('sync-contrats') }}">
+				<button type="submit" class="btn btn-secondary" onclick="this.disabled=true; this.innerHTML='Synchronisation...'; this.form.submit();">
+					Synchroniser
+				</button>
+			</form>
 		</div>
 	</div>
+
+	{# Flash messages #}
+	{% for message in app.flashes('success') %}
+		<div class="alert alert-success" style="margin-bottom: 1rem;">{{ message }}</div>
+	{% endfor %}
+	{% for message in app.flashes('error') %}
+		<div class="alert alert-danger" style="margin-bottom: 1rem;">{{ message }}</div>
+	{% endfor %}
 
 	{# Stats #}
 	<div class="stats-grid">
