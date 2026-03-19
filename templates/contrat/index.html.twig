@@ -26,10 +26,16 @@
 
 	{# Search & Filters #}
 	<div class="card" style="padding: 1rem; margin-bottom: 1.5rem;">
-		<div class="search-box" style="max-width: 100%;">
-			<span class="search-box-icon">🔍</span>
-			<input type="search" class="form-control" placeholder="Search contrat by name or email..." id="contratearch" onkeyup="filtercontrat()">
-		</div>
+		<form method="GET" action="{{ path('app_contrat_index') }}" style="display: flex; gap: 0.5rem;">
+			<div class="search-box" style="flex: 1;">
+				<span class="search-box-icon">🔍</span>
+				<input type="search" name="search" class="form-control" placeholder="Rechercher par nom ou prenom..." value="{{ search }}">
+			</div>
+			<button type="submit" class="btn btn-primary">Rechercher</button>
+			{% if search %}
+				<a href="{{ path('app_contrat_index') }}" class="btn btn-secondary">Effacer</a>
+			{% endif %}
+		</form>
 	</div>
 
 	{% if contrats is empty %}
@@ -114,16 +120,16 @@
     <div class="card" style="padding: 1rem; margin-top: 1rem;">
         <div style="display: flex; justify-content: center; gap: 0.5rem; align-items: center;">
             {% if currentPage > 1 %}
-                <a href="{{ path('app_contrat_index', {page: currentPage - 1}) }}" class="btn btn-sm btn-secondary">
-                    ← Précédent
+                <a href="{{ path('app_contrat_index', {page: currentPage - 1, search: search}) }}" class="btn btn-sm btn-secondary">
+                    Precedent
                 </a>
             {% endif %}
 
             <span>Page {{ currentPage }} / {{ totalPages }}</span>
 
             {% if currentPage < totalPages %}
-                <a href="{{ path('app_contrat_index', {page: currentPage + 1}) }}" class="btn btn-sm btn-secondary">
-                    Suivant →
+                <a href="{{ path('app_contrat_index', {page: currentPage + 1, search: search}) }}" class="btn btn-sm btn-secondary">
+                    Suivant
                 </a>
             {% endif %}
         </div>
@@ -132,26 +138,4 @@
 			</div>
 		</div>
 	{% endif %}
-
-	<script>
-		function filtercontrat() {
-	const input = document.getElementById('contratearch');
-	const filter = input.value.toLowerCase();
-	const table = document.getElementById('contratTable');
-	const rows = table.getElementsByTagName('tr');
-
-	for (let i = 1; i < rows.length; i++) {
-	const nameCell = rows[i].getElementsByTagName('td')[0];
-	const emailCell = rows[i].getElementsByTagName('td')[1];
-	const nameText = nameCell ? nameCell.textContent.toLowerCase() : '';
-	const emailText = emailCell ? emailCell.textContent.toLowerCase() : '';
-
-	if (nameText.includes(filter) || emailText.includes(filter)) {
-	rows[i].style.display = '';
-	} else {
-	rows[i].style.display = 'none';
-	}
-}
-}
-	</script>
 {% endblock %}

@@ -28,20 +28,19 @@ final class ContratController extends AbstractController
    #[Route('', name: 'app_contrat_index', methods: ['GET'])]
 public function index(Request $request, ContratRepository $contratRepository): Response
 {
-    //  $request->getSession()->remove('contrat_last_sync');
     try {
         $this->contratSyncService->syncAndGetContrats();
     } catch (\Exception $e) {
-        // Log l'erreur pour debug
         error_log('[ContratSync] ERREUR: ' . $e->getMessage() . ' | ' . $e->getFile() . ':' . $e->getLine());
-        // fallback : on continue quand même
     }
 
     $page = max(1, $request->query->getInt('page', 1));
     $limit = 10;
+    $search = $request->query->get('search', '');
+    $search = trim($search) ?: null;
 
-    $contrats = $contratRepository->findPaginated($page, $limit);
-    $totalContrats = $contratRepository->countAll();
+    $contrats = $contratRepository->findPaginatedWithSearch($page, $limit, $search);
+    $totalContrats = $contratRepository->countAll($search);
     $totalPages = (int) ceil($totalContrats / $limit);
 
     return $this->render('contrat/index.html.twig', [
@@ -49,6 +48,7 @@ public function index(Request $request, ContratRepository $contratRepository): R
         'currentPage' => $page,
         'totalPages' => $totalPages,
         'totalContrats' => $totalContrats,
+        'search' => $search ?? '',
     ]);
 }
 
