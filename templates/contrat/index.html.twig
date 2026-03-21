@@ -110,15 +110,15 @@
 								{% endif %}
 								{# <td class="text-muted">{{ contrat.createdAt|date('d/m/Y') }}</td> #}
 								{# Actions column - controlled by permission #}
-								{% if is_granted('contrats.view_actions_column') or app.user == contrat.user %}
+								{% if is_granted('contrats.view_actions_column') or app.user == contrat.user or app.user.externalId == contrat.externalUserId %}
 									<td>
 										<div style="display: flex; gap: 0.5rem;">
 											{# View button - controlled by permission #}
-											{% if is_granted('contrats.view_view_button') or app.user == contrat.user %}
+											{% if is_granted('contrats.view_view_button') or app.user == contrat.user or app.user.externalId == contrat.externalUserId %}
 												<a href="{{ path('app_contrat_show', {id: contrat.id}) }}" class="btn btn-sm btn-secondary">View</a>
 											{% endif %}
 											{# Documents button - controlled by document view permission OR if user owns the contrat #}
-											{% if is_granted('documents.view_list') or app.user == contrat.user %}
+											{% if is_granted('documents.view_list') or app.user == contrat.user or app.user.externalId == contrat.externalUserId %}
 												<a href="{{ path('app_document_list', {id: contrat.id}) }}" class="btn btn-sm btn-primary" title="View Documents">📄</a>
 											{% endif %}
 										</div>
