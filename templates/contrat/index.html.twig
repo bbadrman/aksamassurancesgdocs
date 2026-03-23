@@ -110,7 +110,7 @@
 								{% endif %}
 								{# <td class="text-muted">{{ contrat.createdAt|date('d/m/Y') }}</td> #}
 								{# Actions column - controlled by permission #}
-								{% if is_granted('contrats.view_actions_column') or app.user == contrat.user or app.user.externalId == contrat.externalUserId %}
+								{% if is_granted('ROLE_ADMIN') or is_granted('contrats.view_actions_column') or app.user == contrat.user or app.user.externalId == contrat.externalUserId %}
 									<td>
 										<div style="display: flex; gap: 0.5rem;">
 											{# View button - controlled by permission #}
