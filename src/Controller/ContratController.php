@@ -68,10 +68,29 @@ public function index(Request $request, ContratRepository $contratRepository): R
         return $this->redirectToRoute('app_contrat_index');
     }
 
+    #[Route('/external/{externalId}', name: 'app_contrat_show_by_external', methods: ['GET'])]
+    public function showByExternalId(int $externalId): Response
+    {
+        $contrat = $this->contratRepository->findOneBy(['externalId' => $externalId]);
+
+        if (!$contrat) {
+            throw $this->createNotFoundException('Contrat non trouvé avec cet ID externe');
+        }
+
+        return $this->render('contrat/show.html.twig', [
+            'contrat' => $contrat,
+        ]);
+    }
+
     #[Route('/{id}', name: 'app_contrat_show', methods: ['GET'])]
     #[IsGranted(Permission::CONTRATS_VIEW_DETAILS)]
-    public function show(Contrat $contrat): Response
+    public function show(int $id): Response
     {
+        $contrat = $this->contratRepository->findOneBy(['externalId' => $id]);
+
+    if (!$contrat) {
+        throw $this->createNotFoundException("Contrat $id introuvable.");
+    }
         return $this->render('contrat/show.html.twig', [
             'contrat' => $contrat,
         ]);
