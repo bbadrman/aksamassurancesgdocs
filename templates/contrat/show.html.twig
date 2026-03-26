@@ -27,6 +27,13 @@
 	{# Stats #}
 	<div class="stats-grid">
 		<div class="stat-card">
+			<div class="stat-icon icon">🆔</div>
+			<div>
+				<div class="stat-value">{{ contrat.externalId }}</div>
+				<div class="stat-label">Id Contrat en Aksam</div>
+			</div>
+		</div>
+		<div class="stat-card">
 			<div class="stat-icon cyan">📄</div>
 			<div>
 				<div class="stat-value">{{ contrat.documents|length }}</div>
@@ -37,7 +44,7 @@
 			<div class="stat-icon green">📅</div>
 			<div>
 				<div class="stat-value">{{ contrat.createdAt|date('d/m') }}</div>
-				<div class="stat-label">Since</div>
+				<div class="stat-label">Cree le</div>
 			</div>
 		</div>
 	</div>
@@ -53,9 +60,8 @@
 				<div class="detail-value">{{ contrat.nom }}
 					{{ contrat.prenom }}</div>
 			</div>
-			 
-			 
-			 
+
+
 			<div class="detail-item">
 				<div class="detail-label">Created</div>
 				<div class="detail-value">{{ contrat.createdAt|date('d/m/Y H:i') }}</div>
@@ -122,5 +128,5 @@
 		{% endif %}
 	</div>
 
-	 
+
 {% endblock %}

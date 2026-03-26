@@ -115,7 +115,7 @@
 										<div style="display: flex; gap: 0.5rem;">
 											{# View button - controlled by permission #}
 											{% if is_granted('contrats.view_view_button') or app.user == contrat.user or app.user.externalId == contrat.externalUserId %}
-												<a href="{{ path('app_contrat_show', {id: contrat.id}) }}" class="btn btn-sm btn-secondary">View</a>
+												<a href="{{ path('app_contrat_show_interne', {id: contrat.externalUserId}) }}" class="btn btn-sm btn-secondary">View</a>
 											{% endif %}
 											{# Documents button - controlled by document view permission OR if user owns the contrat #}
 											{% if is_granted('documents.view_list') or app.user == contrat.user or app.user.externalId == contrat.externalUserId %}

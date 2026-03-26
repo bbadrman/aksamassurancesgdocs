@@ -82,6 +82,15 @@ public function index(Request $request, ContratRepository $contratRepository): R
         ]);
     }
 
+     #[Route('/show/interne/{id}', name: 'app_contrat_show_interne', methods: ['GET'])]
+    #[IsGranted(Permission::CONTRATS_VIEW_DETAILS)]
+    public function showInterne(Contrat $contrat): Response
+    {
+        return $this->render('contrat/show.html.twig', [
+            'contrat' => $contrat,
+        ]);
+    }
+
     #[Route('/{id}', name: 'app_contrat_show', methods: ['GET'])]
     #[IsGranted(Permission::CONTRATS_VIEW_DETAILS)]
     public function show(int $id): Response
