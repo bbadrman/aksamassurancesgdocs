@@ -35,6 +35,12 @@ class DocumentType extends AbstractType
                         'Condition Générale' => 'conditionGeneral',
                         'Mondat Sepa' => 'mondatSepa',
                         'Bulletin d\'Adhésion' => 'bulletinAdhesion',
+                        'Attestation Mémo' => 'attestationMemo',
+                        'Carte grise provisoire' => 'carteGriseProvisoire',
+                        'Carte vtc' => 'carteVtc',
+                        'Etat de parc' => 'etatParc',
+                        'cin' => 'cin',
+                        'autre' => 'autre',
 
                     ],
                     'expanded' => false,
